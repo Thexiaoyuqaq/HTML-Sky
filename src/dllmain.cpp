@@ -214,6 +214,7 @@ BOOL APIENTRY DllMain(
       // Not the correct game process, act as winhttp.dll.
       return TRUE;
     gGameStatus.pid = GetCurrentProcessId();
+    gModLoaderHandle = hModule;
 
 #ifdef NDEBUG
     // No log file and console.

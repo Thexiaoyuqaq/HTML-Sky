@@ -1,10 +1,14 @@
+// ----------------------------------------------------------------------------
+// Mod loader of HT's Mod Loader.
+// ----------------------------------------------------------------------------
 #include <cmath>
 #include "cJSON.h"
-#include "utils/logger.h"
-#include "loader.h"
-#include "utils/globals.h"
+
 #include "includes/aliases.h"
 #include "includes/htmodloader.h"
+#include "utils/logger.h"
+#include "utils/globals.h"
+#include "loader.h"
 #include "moddata.h"
 
 static inline i32 fileExists(const wchar_t *path) {
@@ -235,6 +239,11 @@ static void expandMods() {
   for (auto it = gModDataLoader.begin(); it != gModDataLoader.end(); it++) {
     const char *modName = it->second.modName.data();
 
+    if (it->second.meta.packageName == "htmodloader")
+      // The data of mod loader itself is set in bootstrap(), so we don't need
+      // to load it again.
+      continue;
+
     // Load library.
     hMod = LoadLibraryW(it->second.paths.dll.data());
     if (hMod)
@@ -257,6 +266,34 @@ static void expandMods() {
   }
 }
 
+/**
+ * Register the loader itself as a single mod. The package name of the loader
+ * is "htmodloader", version is HTML_VERSION_NAME.
+ */
+static void bootstrap() {
+  std::lock_guard<std::mutex> lock(gModDataLock);
+  ModManifest *manifestSelf = &gModDataLoader["htmodloader"];
+  ModRuntime *runtimeSelf = &gModDataRuntime[gModLoaderHandle];
+
+  // Set manifest data.
+  manifestSelf->meta.packageName = "htmodloader";
+  parseVersionNumber(
+    HTML_VERSION_NAME,
+    manifestSelf->meta.version);
+  manifestSelf->author = "HTMonkeyG";
+  manifestSelf->description = "HT's Mod Loader.";
+  manifestSelf->gameEditionFlags = 3;
+  manifestSelf->modName = "HT's Mod Loader";
+  manifestSelf->runtime = runtimeSelf;
+
+  // Set runtime data.
+  runtimeSelf->handle = gModLoaderHandle;
+  runtimeSelf->manifest = manifestSelf;
+  runtimeSelf->loaderFunc.pfn_HTModOnEnable = nullptr;
+  runtimeSelf->loaderFunc.pfn_HTModOnInit = nullptr;
+  runtimeSelf->loaderFunc.pfn_HTModRenderGui = nullptr;
+}
+
 HTStatus HTLoadMods() {
   // Create the mods folder if not exist.
   DWORD attr = GetFileAttributesW(gPathModsWide);
@@ -270,6 +307,7 @@ HTStatus HTLoadMods() {
   }
 
   scanMods();
+  bootstrap();
   expandMods();
 
   return HT_SUCCESS;

@@ -17,6 +17,7 @@ extern char gPathDll[MAX_PATH]
 extern wchar_t gPathModsWide[MAX_PATH];
 extern HANDLE gHeap
   , gEventGuiInit;
+extern HMODULE gModLoaderHandle;
 
 #ifdef __cplusplus
 }
