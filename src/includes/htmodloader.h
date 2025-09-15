@@ -20,9 +20,13 @@
 #define HTML_VERSION_NAME "1.0.0"
 
 #define HTMLAPI __stdcall
+#ifndef HTMLAPIATTR
+#define HTMLAPIATTR
+#endif
 
 // Includes.
 #include <windows.h>
+#include "includes/htkeycodes.h"
 #include "includes/aliases.h"
 
 #ifdef __cplusplus
@@ -80,20 +84,20 @@ typedef void (HTMLAPI *PFN_HTModOnEnable)(
 /**
  * Get game status object.
  */
-void HTGetGameStatus(
+HTMLAPIATTR void HTGetGameStatus(
   HTGameStatus *status);
 
 /**
  * Get the folder where the game executable file is located.
  */
-void HTGetGameExeFolder(
+HTMLAPIATTR void HTGetGameExeFolder(
   char *result, u64 maxLen);
 
 /**
  * Get the folder where the mods is located. In most cases, the same as add
  * "\\htmods" to HTGetGameExeFolder()'s result.
  */
-void HTGetModFolder(
+HTMLAPIATTR void HTGetModFolder(
   char *result, u64 maxLen);
 
 // ----------------------------------------------------------------------------
@@ -126,7 +130,7 @@ typedef struct {
 /**
  * Scan with signature.
  */
-HTMLAPI void *HTSigScan(
+HTMLAPIATTR void *HTMLAPI HTSigScan(
   const HTSignature *signature);
 typedef void *(HTMLAPI *PFN_HTSigScan)(
   const HTSignature *signature);
@@ -144,7 +148,7 @@ typedef struct {
 /**
  * Scan a single function.
  */
-HTMLAPI void *HTSigScanFunc(
+HTMLAPIATTR void *HTMLAPI HTSigScanFunc(
   const HTSignature *signature, HTHookFunction *func);
 typedef void *(HTMLAPI *PFN_HTSigScanFunc)(
   const HTSignature *signature, HTHookFunction *func);
@@ -152,7 +156,7 @@ typedef void *(HTMLAPI *PFN_HTSigScanFunc)(
 /**
  * Scan an array of functions.
  */
-HTMLAPI HTStatus HTSigScanFuncEx(
+HTMLAPIATTR HTStatus HTMLAPI HTSigScanFuncEx(
   const HTSignature **signature, HTHookFunction **func, u32 size);
 typedef HTStatus (HTMLAPI *PFN_HTSigScanFuncEx)(
   const HTSignature **signature, HTHookFunction **func, u32 size);
@@ -164,7 +168,7 @@ typedef HTStatus (HTMLAPI *PFN_HTSigScanFuncEx)(
 /**
  * Install hook with MinHook.
  */
-HTMLAPI HTStatus HTInstallHook(
+HTMLAPIATTR HTStatus HTMLAPI HTInstallHook(
   void *fn, void *detour, void **origin);
 typedef HTStatus (HTMLAPI *PFN_HTInstallHook)(
   void *fn, void *detour, void **origin);
@@ -172,7 +176,7 @@ typedef HTStatus (HTMLAPI *PFN_HTInstallHook)(
 /**
  * Enable hook on specified function.
  */
-HTMLAPI HTStatus HTEnableHook(
+HTMLAPIATTR HTStatus HTMLAPI HTEnableHook(
   void *fn);
 typedef HTStatus (HTMLAPI *PFN_HTEnableHook)(
   void *fn);
@@ -180,7 +184,7 @@ typedef HTStatus (HTMLAPI *PFN_HTEnableHook)(
 /**
  * Disable hook on specified function.
  */
-HTMLAPI HTStatus HTDisableHook(
+HTMLAPIATTR HTStatus HTMLAPI HTDisableHook(
   void *fn);
 typedef HTStatus (HTMLAPI *PFN_HTDisableHook)(
   void *fn);
@@ -188,7 +192,7 @@ typedef HTStatus (HTMLAPI *PFN_HTDisableHook)(
 /**
  * Install hook from HTHookFunction struct.
  */
-HTMLAPI HTStatus HTInstallHookEx(
+HTMLAPIATTR HTStatus HTMLAPI HTInstallHookEx(
   HTHookFunction *func);
 typedef HTStatus (HTMLAPI *PFN_HTInstallHookEx)(
   HTHookFunction *func);
@@ -196,7 +200,7 @@ typedef HTStatus (HTMLAPI *PFN_HTInstallHookEx)(
 /**
  * Enable hook on specified function.
  */ 
-HTMLAPI HTStatus HTEnableHookEx(
+HTMLAPIATTR HTStatus HTMLAPI HTEnableHookEx(
   HTHookFunction *func);
 typedef void (HTMLAPI *PFN_HTEnableHookEx)(
   HTHookFunction *func);
@@ -204,7 +208,7 @@ typedef void (HTMLAPI *PFN_HTEnableHookEx)(
 /**
  * Disable hook on specified function.
  */
-HTMLAPI HTStatus HTDisableHookEx(
+HTMLAPIATTR HTStatus HTMLAPI HTDisableHookEx(
   HTHookFunction *func);
 typedef void (HTMLAPI *PFN_HTDisableHookEx)(
   HTHookFunction *func);
@@ -216,14 +220,14 @@ typedef void (HTMLAPI *PFN_HTDisableHookEx)(
 /**
  * Allocate a sized memory block.
  */
-HTMLAPI void *HTMemAlloc(
+HTMLAPIATTR void *HTMLAPI HTMemAlloc(
   u64 size);
 
 /**
  * Allocate space for an array of `count` objects, each of `size` bytes.
  * Different from calloc(), HTMemNew won't initialize the memory block.
  */
-HTMLAPI void *HTMemNew(
+HTMLAPIATTR void *HTMLAPI HTMemNew(
   u64 count, u64 size);
 
 /**
@@ -232,7 +236,7 @@ HTMLAPI void *HTMemNew(
  * 
  * Mod needs to reset pointer variables to prevent dangling pointers.
  */
-HTMLAPI HTStatus HTMemFree(
+HTMLAPIATTR HTStatus HTMLAPI HTMemFree(
   void *pointer);
 
 // ----------------------------------------------------------------------------
@@ -249,13 +253,13 @@ typedef void *HTHandle;
 /**
  * Get the address of a registered function.
  */
-HTMLAPI PFN_HTVoidFunction HTGetProcAddr(
+HTMLAPIATTR PFN_HTVoidFunction HTMLAPI HTGetProcAddr(
   HMODULE hModule, const char *name);
 
 /**
  * Get a handle for the mod manifest.
  */
-HTMLAPI HTHandle HTGetModManifest(
+HTMLAPIATTR HTHandle HTMLAPI HTGetModManifest(
   HMODULE hModule);
 
 /**
@@ -266,7 +270,7 @@ HTMLAPI HTHandle HTGetModManifest(
  * It is recommended to use namespace strings like `namespace:foobar` when
  * registering functions.
  */
-HTMLAPI HTStatus HTCommRegFunction(
+HTMLAPIATTR HTStatus HTMLAPI HTCommRegFunction(
   HMODULE hModule, const char *name, PFN_HTVoidFunction func);
 
 /**
@@ -276,7 +280,7 @@ HTMLAPI HTStatus HTCommRegFunction(
  * `data` pointer. The callback function must assume that the data pointer
  * is only valid before the callback function returns.
  */
-HTMLAPI HTStatus HTCommOnEvent(
+HTMLAPIATTR HTStatus HTMLAPI HTCommOnEvent(
   const char *name, PFN_HTEventCallback callback);
 
 #define HTCommAddEventListener HTCommOnEvent
@@ -284,7 +288,7 @@ HTMLAPI HTStatus HTCommOnEvent(
 /**
  * Remove a registered event listener.
  */
-HTMLAPI HTStatus HTCommOffEvent(
+HTMLAPIATTR HTStatus HTMLAPI HTCommOffEvent(
   const char *name, PFN_HTEventCallback callback);
 
 #define HTCommRemoveEventListener HTCommOffEvent
@@ -292,12 +296,22 @@ HTMLAPI HTStatus HTCommOffEvent(
 /**
  * Trigger an event with specified data.
  */
-HTMLAPI HTStatus HTCommEmitEvent(
+HTMLAPIATTR HTStatus HTMLAPI HTCommEmitEvent(
   const char *name, void *reserved, void *data);
 
 // ----------------------------------------------------------------------------
 // [SECTION] HTML hotkey register APIs.
 // ----------------------------------------------------------------------------
+
+typedef struct {
+  HTHandle hKey;
+  HTKeyCode key;
+  u08 down;
+} HTKeyEvent;
+
+// Hotkey callback.
+typedef void (HTMLAPI *PFN_HTHotkeyCallback)(
+  const HTKeyEvent *event);
 
 #ifdef __cplusplus
 }

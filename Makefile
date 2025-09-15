@@ -23,7 +23,7 @@ CXX = g++
 # Params.
 CFLAGS = -Wall -Wformat -Wno-unused-function -O3 -ffunction-sections -fdata-sections -static -flto -s
 CFLAGS += -I./src
-LFLAGS = -Wl,--gc-sections,-O3,--out-implib,$(DIST_DIR)/htmodloader.lib,--export-all-symbols
+LFLAGS = -Wl,--gc-sections,-O3,--version-script,$(SRC_DIR)/exports.txt,--out-implib,$(DIST_DIR)/htmodloader.lib
 LFLAGS += -lgdi32 -ldwmapi -ld3dcompiler -lstdc++
 # Include ImGui.
 CFLAGS += -I./libraries/imgui-1.91.9b -I./libraries/imgui-1.91.9b/backends
@@ -38,7 +38,7 @@ LFLAGS += -L./libraries/vulkan/Lib -lvulkan-1
 CFLAGS += -I./libraries/cJSON
 LFLAGS += -L./libraries/cJSON -lcjson
 # Macros.
-CFLAGS += -DNDEBUG
+CFLAGS += -DNDEBUG -DHTMLAPIATTR=__declspec(dllexport) -DIMGUI_API=__declspec(dllexport)
 
 vpath %.c $(SRC_DIRS)
 vpath %.cpp $(SRC_DIRS)

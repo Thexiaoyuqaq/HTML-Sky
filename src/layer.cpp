@@ -25,6 +25,7 @@
 // [SECTION] Type declarations.
 // ----------------------------------------------------------------------------
 
+#define HTLAYER_ATTR extern "C" __declspec(dllexport)
 #define MAX_FRAME_BUFFER 8
 
 // Local structure, only used for traversing linked lists.
@@ -856,7 +857,7 @@ static VKAPI_ATTR VkResult VKAPI_CALL HT_vkQueuePresentKHR(
 // [SECTION] Exported functions.
 // ----------------------------------------------------------------------------
 
-extern "C" VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL HT_vkGetDeviceProcAddr(
+HTLAYER_ATTR VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL HT_vkGetDeviceProcAddr(
   VkDevice device,
   const char *pName
 );
@@ -864,7 +865,7 @@ extern "C" VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL HT_vkGetDeviceProcAddr(
 /**
  * The core export function of Vulkan layer.
  */
-extern "C" VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL HT_vkGetInstanceProcAddr(
+HTLAYER_ATTR VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL HT_vkGetInstanceProcAddr(
   VkInstance instance,
   const char *pName
 ) {

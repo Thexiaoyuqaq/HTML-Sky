@@ -2,6 +2,10 @@
 // The mod should implement and export functions declared below.
 // ----------------------------------------------------------------------------
 
+// #pragma once
+#ifndef __HTMOD_H__
+#define __HTMOD_H__
+
 #include <windows.h>
 #include "includes/htmodloader.h"
 
@@ -13,13 +17,15 @@ extern "C" {
  * ImGui draw calls should only be put in this function. `timeElapesed`
  * indicates the time elapsed since the last frame.
  */
-void HTMLAPI HTModRenderGui(
+__declspec(dllexport) void HTMLAPI HTModRenderGui(
   f32 timeElapesed, void *reserved);
-void HTMLAPI HTModOnInit(
+__declspec(dllexport) void HTMLAPI HTModOnInit(
   void *reserved);
-void HTMLAPI HTModOnEnable(
+__declspec(dllexport) void HTMLAPI HTModOnEnable(
   void *reserved);
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
