@@ -75,76 +75,76 @@ static FARPROC pfn_WinHttpWebSocketShutdown;
 static FARPROC pfn_WinHttpWriteData;
 static FARPROC pfn_WinHttpWriteProxySettings;
 
-void *WinHttpPacJsWorkerMain() { return (void *)pfn_WinHttpPacJsWorkerMain(); }
-void *WinHttpSetSecureLegacyServersAppCompat() { return (void *)pfn_WinHttpSetSecureLegacyServersAppCompat(); }
-void *DllCanUnloadNow() { return (void *)pfn_DllCanUnloadNow(); }
-void *DllGetClassObject() { return (void *)pfn_DllGetClassObject(); }
-void *Private1() { return (void *)pfn_Private1(); }
-void *SvchostPushServiceGlobals() { return (void *)pfn_SvchostPushServiceGlobals(); }
-void *WinHttpAddRequestHeaders() { return (void *)pfn_WinHttpAddRequestHeaders(); }
-void *WinHttpAddRequestHeadersEx() { return (void *)pfn_WinHttpAddRequestHeadersEx(); }
-void *WinHttpAutoProxySvcMain() { return (void *)pfn_WinHttpAutoProxySvcMain(); }
-void *WinHttpCheckPlatform() { return (void *)pfn_WinHttpCheckPlatform(); }
-void *WinHttpCloseHandle() { return (void *)pfn_WinHttpCloseHandle(); }
-void *WinHttpConnect() { return (void *)pfn_WinHttpConnect(); }
-void *WinHttpConnectionDeletePolicyEntries() { return (void *)pfn_WinHttpConnectionDeletePolicyEntries(); }
-void *WinHttpConnectionDeleteProxyInfo() { return (void *)pfn_WinHttpConnectionDeleteProxyInfo(); }
-void *WinHttpConnectionFreeNameList() { return (void *)pfn_WinHttpConnectionFreeNameList(); }
-void *WinHttpConnectionFreeProxyInfo() { return (void *)pfn_WinHttpConnectionFreeProxyInfo(); }
-void *WinHttpConnectionFreeProxyList() { return (void *)pfn_WinHttpConnectionFreeProxyList(); }
-void *WinHttpConnectionGetNameList() { return (void *)pfn_WinHttpConnectionGetNameList(); }
-void *WinHttpConnectionGetProxyInfo() { return (void *)pfn_WinHttpConnectionGetProxyInfo(); }
-void *WinHttpConnectionGetProxyList() { return (void *)pfn_WinHttpConnectionGetProxyList(); }
-void *WinHttpConnectionSetPolicyEntries() { return (void *)pfn_WinHttpConnectionSetPolicyEntries(); }
-void *WinHttpConnectionSetProxyInfo() { return (void *)pfn_WinHttpConnectionSetProxyInfo(); }
-void *WinHttpConnectionUpdateIfIndexTable() { return (void *)pfn_WinHttpConnectionUpdateIfIndexTable(); }
-void *WinHttpCrackUrl() { return (void *)pfn_WinHttpCrackUrl(); }
-void *WinHttpCreateProxyResolver() { return (void *)pfn_WinHttpCreateProxyResolver(); }
-void *WinHttpCreateUrl() { return (void *)pfn_WinHttpCreateUrl(); }
-void *WinHttpDetectAutoProxyConfigUrl() { return (void *)pfn_WinHttpDetectAutoProxyConfigUrl(); }
-void *WinHttpFreeProxyResult() { return (void *)pfn_WinHttpFreeProxyResult(); }
-void *WinHttpFreeProxyResultEx() { return (void *)pfn_WinHttpFreeProxyResultEx(); }
-void *WinHttpFreeProxySettings() { return (void *)pfn_WinHttpFreeProxySettings(); }
-void *WinHttpGetDefaultProxyConfiguration() { return (void *)pfn_WinHttpGetDefaultProxyConfiguration(); }
-void *WinHttpGetIEProxyConfigForCurrentUser() { return (void *)pfn_WinHttpGetIEProxyConfigForCurrentUser(); }
-void *WinHttpGetProxyForUrl() { return (void *)pfn_WinHttpGetProxyForUrl(); }
-void *WinHttpGetProxyForUrlEx() { return (void *)pfn_WinHttpGetProxyForUrlEx(); }
-void *WinHttpGetProxyForUrlEx2() { return (void *)pfn_WinHttpGetProxyForUrlEx2(); }
-void *WinHttpGetProxyForUrlHvsi() { return (void *)pfn_WinHttpGetProxyForUrlHvsi(); }
-void *WinHttpGetProxyResult() { return (void *)pfn_WinHttpGetProxyResult(); }
-void *WinHttpGetProxyResultEx() { return (void *)pfn_WinHttpGetProxyResultEx(); }
-void *WinHttpGetProxySettingsVersion() { return (void *)pfn_WinHttpGetProxySettingsVersion(); }
-void *WinHttpGetTunnelSocket() { return (void *)pfn_WinHttpGetTunnelSocket(); }
-void *WinHttpOpen() { return (void *)pfn_WinHttpOpen(); }
-void *WinHttpOpenRequest() { return (void *)pfn_WinHttpOpenRequest(); }
-void *WinHttpProbeConnectivity() { return (void *)pfn_WinHttpProbeConnectivity(); }
-void *WinHttpQueryAuthSchemes() { return (void *)pfn_WinHttpQueryAuthSchemes(); }
-void *WinHttpQueryDataAvailable() { return (void *)pfn_WinHttpQueryDataAvailable(); }
-void *WinHttpQueryHeaders() { return (void *)pfn_WinHttpQueryHeaders(); }
-void *WinHttpQueryOption() { return (void *)pfn_WinHttpQueryOption(); }
-void *WinHttpReadData() { return (void *)pfn_WinHttpReadData(); }
-void *WinHttpReadProxySettings() { return (void *)pfn_WinHttpReadProxySettings(); }
-void *WinHttpReadProxySettingsHvsi() { return (void *)pfn_WinHttpReadProxySettingsHvsi(); }
-void *WinHttpReceiveResponse() { return (void *)pfn_WinHttpReceiveResponse(); }
-void *WinHttpResetAutoProxy() { return (void *)pfn_WinHttpResetAutoProxy(); }
-void *WinHttpSaveProxyCredentials() { return (void *)pfn_WinHttpSaveProxyCredentials(); }
-void *WinHttpSendRequest() { return (void *)pfn_WinHttpSendRequest(); }
-void *WinHttpSetCredentials() { return (void *)pfn_WinHttpSetCredentials(); }
-void *WinHttpSetDefaultProxyConfiguration() { return (void *)pfn_WinHttpSetDefaultProxyConfiguration(); }
-void *WinHttpSetOption() { return (void *)pfn_WinHttpSetOption(); }
-void *WinHttpSetProxySettingsPerUser() { return (void *)pfn_WinHttpSetProxySettingsPerUser(); }
-void *WinHttpSetStatusCallback() { return (void *)pfn_WinHttpSetStatusCallback(); }
-void *WinHttpSetTimeouts() { return (void *)pfn_WinHttpSetTimeouts(); }
-void *WinHttpTimeFromSystemTime() { return (void *)pfn_WinHttpTimeFromSystemTime(); }
-void *WinHttpTimeToSystemTime() { return (void *)pfn_WinHttpTimeToSystemTime(); }
-void *WinHttpWebSocketClose() { return (void *)pfn_WinHttpWebSocketClose(); }
-void *WinHttpWebSocketCompleteUpgrade() { return (void *)pfn_WinHttpWebSocketCompleteUpgrade(); }
-void *WinHttpWebSocketQueryCloseStatus() { return (void *)pfn_WinHttpWebSocketQueryCloseStatus(); }
-void *WinHttpWebSocketReceive() { return (void *)pfn_WinHttpWebSocketReceive(); }
-void *WinHttpWebSocketSend() { return (void *)pfn_WinHttpWebSocketSend(); }
-void *WinHttpWebSocketShutdown() { return (void *)pfn_WinHttpWebSocketShutdown(); }
-void *WinHttpWriteData() { return (void *)pfn_WinHttpWriteData(); }
-void *WinHttpWriteProxySettings() { return (void *)pfn_WinHttpWriteProxySettings(); }
+__declspec(dllexport) void *WinHttpPacJsWorkerMain() { return (void *)pfn_WinHttpPacJsWorkerMain(); }
+__declspec(dllexport) void *WinHttpSetSecureLegacyServersAppCompat() { return (void *)pfn_WinHttpSetSecureLegacyServersAppCompat(); }
+__declspec(dllexport) void *DllCanUnloadNow() { return (void *)pfn_DllCanUnloadNow(); }
+__declspec(dllexport) void *DllGetClassObject() { return (void *)pfn_DllGetClassObject(); }
+__declspec(dllexport) void *Private1() { return (void *)pfn_Private1(); }
+__declspec(dllexport) void *SvchostPushServiceGlobals() { return (void *)pfn_SvchostPushServiceGlobals(); }
+__declspec(dllexport) void *WinHttpAddRequestHeaders() { return (void *)pfn_WinHttpAddRequestHeaders(); }
+__declspec(dllexport) void *WinHttpAddRequestHeadersEx() { return (void *)pfn_WinHttpAddRequestHeadersEx(); }
+__declspec(dllexport) void *WinHttpAutoProxySvcMain() { return (void *)pfn_WinHttpAutoProxySvcMain(); }
+__declspec(dllexport) void *WinHttpCheckPlatform() { return (void *)pfn_WinHttpCheckPlatform(); }
+__declspec(dllexport) void *WinHttpCloseHandle() { return (void *)pfn_WinHttpCloseHandle(); }
+__declspec(dllexport) void *WinHttpConnect() { return (void *)pfn_WinHttpConnect(); }
+__declspec(dllexport) void *WinHttpConnectionDeletePolicyEntries() { return (void *)pfn_WinHttpConnectionDeletePolicyEntries(); }
+__declspec(dllexport) void *WinHttpConnectionDeleteProxyInfo() { return (void *)pfn_WinHttpConnectionDeleteProxyInfo(); }
+__declspec(dllexport) void *WinHttpConnectionFreeNameList() { return (void *)pfn_WinHttpConnectionFreeNameList(); }
+__declspec(dllexport) void *WinHttpConnectionFreeProxyInfo() { return (void *)pfn_WinHttpConnectionFreeProxyInfo(); }
+__declspec(dllexport) void *WinHttpConnectionFreeProxyList() { return (void *)pfn_WinHttpConnectionFreeProxyList(); }
+__declspec(dllexport) void *WinHttpConnectionGetNameList() { return (void *)pfn_WinHttpConnectionGetNameList(); }
+__declspec(dllexport) void *WinHttpConnectionGetProxyInfo() { return (void *)pfn_WinHttpConnectionGetProxyInfo(); }
+__declspec(dllexport) void *WinHttpConnectionGetProxyList() { return (void *)pfn_WinHttpConnectionGetProxyList(); }
+__declspec(dllexport) void *WinHttpConnectionSetPolicyEntries() { return (void *)pfn_WinHttpConnectionSetPolicyEntries(); }
+__declspec(dllexport) void *WinHttpConnectionSetProxyInfo() { return (void *)pfn_WinHttpConnectionSetProxyInfo(); }
+__declspec(dllexport) void *WinHttpConnectionUpdateIfIndexTable() { return (void *)pfn_WinHttpConnectionUpdateIfIndexTable(); }
+__declspec(dllexport) void *WinHttpCrackUrl() { return (void *)pfn_WinHttpCrackUrl(); }
+__declspec(dllexport) void *WinHttpCreateProxyResolver() { return (void *)pfn_WinHttpCreateProxyResolver(); }
+__declspec(dllexport) void *WinHttpCreateUrl() { return (void *)pfn_WinHttpCreateUrl(); }
+__declspec(dllexport) void *WinHttpDetectAutoProxyConfigUrl() { return (void *)pfn_WinHttpDetectAutoProxyConfigUrl(); }
+__declspec(dllexport) void *WinHttpFreeProxyResult() { return (void *)pfn_WinHttpFreeProxyResult(); }
+__declspec(dllexport) void *WinHttpFreeProxyResultEx() { return (void *)pfn_WinHttpFreeProxyResultEx(); }
+__declspec(dllexport) void *WinHttpFreeProxySettings() { return (void *)pfn_WinHttpFreeProxySettings(); }
+__declspec(dllexport) void *WinHttpGetDefaultProxyConfiguration() { return (void *)pfn_WinHttpGetDefaultProxyConfiguration(); }
+__declspec(dllexport) void *WinHttpGetIEProxyConfigForCurrentUser() { return (void *)pfn_WinHttpGetIEProxyConfigForCurrentUser(); }
+__declspec(dllexport) void *WinHttpGetProxyForUrl() { return (void *)pfn_WinHttpGetProxyForUrl(); }
+__declspec(dllexport) void *WinHttpGetProxyForUrlEx() { return (void *)pfn_WinHttpGetProxyForUrlEx(); }
+__declspec(dllexport) void *WinHttpGetProxyForUrlEx2() { return (void *)pfn_WinHttpGetProxyForUrlEx2(); }
+__declspec(dllexport) void *WinHttpGetProxyForUrlHvsi() { return (void *)pfn_WinHttpGetProxyForUrlHvsi(); }
+__declspec(dllexport) void *WinHttpGetProxyResult() { return (void *)pfn_WinHttpGetProxyResult(); }
+__declspec(dllexport) void *WinHttpGetProxyResultEx() { return (void *)pfn_WinHttpGetProxyResultEx(); }
+__declspec(dllexport) void *WinHttpGetProxySettingsVersion() { return (void *)pfn_WinHttpGetProxySettingsVersion(); }
+__declspec(dllexport) void *WinHttpGetTunnelSocket() { return (void *)pfn_WinHttpGetTunnelSocket(); }
+__declspec(dllexport) void *WinHttpOpen() { return (void *)pfn_WinHttpOpen(); }
+__declspec(dllexport) void *WinHttpOpenRequest() { return (void *)pfn_WinHttpOpenRequest(); }
+__declspec(dllexport) void *WinHttpProbeConnectivity() { return (void *)pfn_WinHttpProbeConnectivity(); }
+__declspec(dllexport) void *WinHttpQueryAuthSchemes() { return (void *)pfn_WinHttpQueryAuthSchemes(); }
+__declspec(dllexport) void *WinHttpQueryDataAvailable() { return (void *)pfn_WinHttpQueryDataAvailable(); }
+__declspec(dllexport) void *WinHttpQueryHeaders() { return (void *)pfn_WinHttpQueryHeaders(); }
+__declspec(dllexport) void *WinHttpQueryOption() { return (void *)pfn_WinHttpQueryOption(); }
+__declspec(dllexport) void *WinHttpReadData() { return (void *)pfn_WinHttpReadData(); }
+__declspec(dllexport) void *WinHttpReadProxySettings() { return (void *)pfn_WinHttpReadProxySettings(); }
+__declspec(dllexport) void *WinHttpReadProxySettingsHvsi() { return (void *)pfn_WinHttpReadProxySettingsHvsi(); }
+__declspec(dllexport) void *WinHttpReceiveResponse() { return (void *)pfn_WinHttpReceiveResponse(); }
+__declspec(dllexport) void *WinHttpResetAutoProxy() { return (void *)pfn_WinHttpResetAutoProxy(); }
+__declspec(dllexport) void *WinHttpSaveProxyCredentials() { return (void *)pfn_WinHttpSaveProxyCredentials(); }
+__declspec(dllexport) void *WinHttpSendRequest() { return (void *)pfn_WinHttpSendRequest(); }
+__declspec(dllexport) void *WinHttpSetCredentials() { return (void *)pfn_WinHttpSetCredentials(); }
+__declspec(dllexport) void *WinHttpSetDefaultProxyConfiguration() { return (void *)pfn_WinHttpSetDefaultProxyConfiguration(); }
+__declspec(dllexport) void *WinHttpSetOption() { return (void *)pfn_WinHttpSetOption(); }
+__declspec(dllexport) void *WinHttpSetProxySettingsPerUser() { return (void *)pfn_WinHttpSetProxySettingsPerUser(); }
+__declspec(dllexport) void *WinHttpSetStatusCallback() { return (void *)pfn_WinHttpSetStatusCallback(); }
+__declspec(dllexport) void *WinHttpSetTimeouts() { return (void *)pfn_WinHttpSetTimeouts(); }
+__declspec(dllexport) void *WinHttpTimeFromSystemTime() { return (void *)pfn_WinHttpTimeFromSystemTime(); }
+__declspec(dllexport) void *WinHttpTimeToSystemTime() { return (void *)pfn_WinHttpTimeToSystemTime(); }
+__declspec(dllexport) void *WinHttpWebSocketClose() { return (void *)pfn_WinHttpWebSocketClose(); }
+__declspec(dllexport) void *WinHttpWebSocketCompleteUpgrade() { return (void *)pfn_WinHttpWebSocketCompleteUpgrade(); }
+__declspec(dllexport) void *WinHttpWebSocketQueryCloseStatus() { return (void *)pfn_WinHttpWebSocketQueryCloseStatus(); }
+__declspec(dllexport) void *WinHttpWebSocketReceive() { return (void *)pfn_WinHttpWebSocketReceive(); }
+__declspec(dllexport) void *WinHttpWebSocketSend() { return (void *)pfn_WinHttpWebSocketSend(); }
+__declspec(dllexport) void *WinHttpWebSocketShutdown() { return (void *)pfn_WinHttpWebSocketShutdown(); }
+__declspec(dllexport) void *WinHttpWriteData() { return (void *)pfn_WinHttpWriteData(); }
+__declspec(dllexport) void *WinHttpWriteProxySettings() { return (void *)pfn_WinHttpWriteProxySettings(); }
 
 void proxy_importFunctions(void *hModule) {
   pfn_WinHttpPacJsWorkerMain = GetProcAddress(hModule, "WinHttpPacJsWorkerMain");

@@ -32,7 +32,7 @@ var functionNames = function() {
 
 for (var fn of functionNames) {
   proxy.declaration += `static FARPROC pfn_${fn};\n`;
-  proxy.detour += `void *${fn}() { return (void *)pfn_${fn}(); }\n`;
+  proxy.detour += `__declspec(dllexport) void *${fn}() { return (void *)pfn_${fn}(); }\n`;
   //proxy.detour += `void *${fn}() { return (void *)pfn_${fn}(); }\n`;
   proxy.import += `  pfn_${fn} = GetProcAddress(hModule, "${fn}");\n`;
   proxy.def += `  ${fn} = detour_${fn}\n`;
