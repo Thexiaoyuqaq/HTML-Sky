@@ -11,6 +11,7 @@
 #include "utils/texts.h"
 #include "loader.h"
 #include "moddata.h"
+#include "bootstrap.h"
 
 static inline i32 fileExists(const wchar_t *path) {
   DWORD attr = GetFileAttributesW(path);
@@ -231,34 +232,6 @@ static void getModExportedFunctions(
 }
 
 /**
- * Register the loader itself as a single mod. The package name of the loader
- * is "htmodloader", version is HTML_VERSION_NAME.
- */
-static void bootstrap() {
-  std::lock_guard<std::mutex> lock(gModDataLock);
-  ModManifest *manifestSelf = &gModDataLoader[HTTexts_ModLoaderPackageName];
-  ModRuntime *runtimeSelf = &gModDataRuntime[gModLoaderHandle];
-
-  // Set manifest data.
-  manifestSelf->meta.packageName = HTTexts_ModLoaderPackageName;
-  parseVersionNumber(
-    HTML_VERSION_NAME,
-    manifestSelf->meta.version);
-  manifestSelf->author = "HTMonkeyG";
-  manifestSelf->description = HTTexts_ModLoaderDesc;
-  manifestSelf->gameEditionFlags = 3;
-  manifestSelf->modName = HTTexts_ModLoaderName;
-  manifestSelf->runtime = runtimeSelf;
-
-  // Set runtime data.
-  runtimeSelf->handle = gModLoaderHandle;
-  runtimeSelf->manifest = manifestSelf;
-  runtimeSelf->loaderFunc.pfn_HTModOnEnable = nullptr;
-  runtimeSelf->loaderFunc.pfn_HTModOnInit = nullptr;
-  runtimeSelf->loaderFunc.pfn_HTModRenderGui = nullptr;
-}
-
-/**
  * Load all avaliable mods into the game process and register mod runtime data.
  */
 static void expandMods() {
@@ -321,8 +294,8 @@ HTStatus HTLoadMods() {
     return HT_FAIL;
   }
 
+  HTBootstrap();
   scanMods();
-  bootstrap();
   expandMods();
   initMods();
 

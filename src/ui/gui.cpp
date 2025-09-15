@@ -9,12 +9,36 @@
 #include "ui/console.h"
 
 #include "utils/globals.h"
+#include "utils/texts.h"
 #include "moddata.h"
 
 static bool gShowMainMenu = true
   , gFirstFrame = true;
 static const ImVec4 modNameColor(1, 1, 1, 1)
   , modDescColor(0.75, 0.75, 0.75, 1);
+static float gMenuKeyBindMaxPosX = 0;
+static ModKeyBind *gActiveKey = nullptr;
+static char gFakeBuffer[5] = {0};
+
+/**
+ * Modified from ImGui. Check whether a key has name string.
+ */
+static inline bool isNamedKey(HTKeyCode key) {
+  return (key >= HTKey_Tab && key <= HTKey_Oem102)
+    || (key >= HTKey_MouseLeft && key <= HTKey_MouseWheelY);
+}
+
+/**
+ * Modified from ImGui. Get the name string of a key.
+ */
+static const char *getKeyName(HTKeyCode key) {
+  if (key == HTKey_None)
+    return "None";
+  if (!isNamedKey(key))
+    return "Unknown";
+
+  return HTKeyNames[key - HTKey_Tab];
+}
 
 /**
  * Render mod list tab item.
@@ -22,7 +46,9 @@ static const ImVec4 modNameColor(1, 1, 1, 1)
 static void HTMenuAbouts() {
   ImGui::Text("HT's Mod Loader v" HTML_VERSION_NAME " by HTMonkeyG");
   ImGui::Text("A mod loader developed for Sky:CotL.");
-  ImGui::Text("<https://www.github.com/HTMonkeyG/HTML-Sky>");
+  ImGui::TextLinkOpenURL(
+    "<https://www.github.com/HTMonkeyG/HTML-Sky>",
+    "https://www.github.com/HTMonkeyG/HTML-Sky");
 }
 
 /**
@@ -63,6 +89,67 @@ static void HTMenuModList() {
   ImGui::EndChild();
 }
 
+static ImGuiKey waitForKeyPress() {
+  for (ImGuiKey i = ImGuiKey_NamedKey_BEGIN; i < ImGuiKey_NamedKey_END; i = (ImGuiKey)(i + 1)) {
+    if (ImGui::IsKeyPressed(i))
+      return i;
+  }
+  return ImGuiKey_None;
+}
+
+static void showSingleKeyBind(
+  ModKeyBind *kb,
+  f32 cursor
+) {
+  ImGuiIO &io = ImGui::GetIO();
+  f32 x;
+
+  // Show key display name.
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text(kb->displayName.c_str());
+  ImGui::SameLine();
+
+  // Calculate the max pos X of all the texts, for a better align.
+  x = ImGui::GetCursorPosX();
+  if (gMenuKeyBindMaxPosX < x)
+    gMenuKeyBindMaxPosX = x;
+
+  // Right align, show current key.
+  ImGui::SetCursorPosX(cursor);
+  if (gActiveKey == kb) {
+    // Modify a key.
+    // Forcely capture the keyboard inputs.
+    io.WantCaptureKeyboard = true;
+    ImGui::SetNextItemWidth(75);
+    ImGui::InputText(
+      "##KeyModify",
+      gFakeBuffer,
+      sizeof(gFakeBuffer));
+    ImGui::SetKeyboardFocusHere(-1);
+
+    // Write the captured key into the ModKeyBind struct.
+    ImGuiKey key = waitForKeyPress();
+    if (key != ImGuiKey_None) {
+      gFakeBuffer[0] = 0;
+      gActiveKey->key = (HTKeyCode)key;
+      gActiveKey = nullptr;
+    }
+  } else if (ImGui::Button(getKeyName(kb->key), ImVec2(75, 0)))
+    // Trigger key modification.
+    gActiveKey = kb;
+
+  // Show reset button.
+  ImGui::SameLine();
+  ImGui::BeginDisabled(kb->defaultKey == kb->key);
+  if (ImGui::Button("Reset", ImVec2(75, 0)))
+    // Reset key bind.
+    kb->key = kb->defaultKey;
+  ImGui::EndDisabled();
+}
+
+/**
+ * Display key binds menu, and handle key bind modification.
+ */
 static void displayAndUpdateKeys() {
   float windowPadding = ImGui::GetStyle().WindowPadding.x
     , cursor;
@@ -70,40 +157,32 @@ static void displayAndUpdateKeys() {
   // Calculate cursor pos for right alignment.
   cursor = ImGui::GetContentRegionAvail().x + ImGui::GetCursorPosX();
   cursor -= 150.0 + windowPadding;
-  if (cursor <= 150.0)
-    cursor = 150.0;
+  if (cursor <= gMenuKeyBindMaxPosX)
+    cursor = gMenuKeyBindMaxPosX;
 
+  ImGui::PushTextWrapPos(500.0);
   for (auto modIt = gModDataRuntime.begin(); modIt != gModDataRuntime.end(); modIt++) {
     ModRuntime *rt = &modIt->second;
     if (rt->keyBinds.empty())
       continue;
+
+    // Mod name.
     ImGui::SeparatorText(rt->manifest->modName.c_str());
+
+    // Keys.
     for (auto keyIt = rt->keyBinds.begin(); keyIt != rt->keyBinds.end(); keyIt++) {
       ModKeyBind *kb = &keyIt->second;
       ImGui::PushID((void *)kb);
-
-      // Show key display name.
-      ImGui::Text(kb->displayName.c_str());
-
-      // Right align, show current key.
-      ImGui::SameLine();
-      ImGui::SetCursorPosX(cursor);
-      ImGui::Button(
-        ImGui::GetKeyName((ImGuiKey)kb->key),
-        ImVec2(75, 0));
-
-      // Show reset button.
-      ImGui::SameLine();
-      ImGui::BeginDisabled(kb->defaultKey == kb->key);
-      ImGui::Button("Reset",
-        ImVec2(75, 0));
-      ImGui::EndDisabled();
-
+      showSingleKeyBind(kb, cursor);
       ImGui::PopID();
     }
   }
+  ImGui::PopTextWrapPos();
 }
 
+/**
+ * Rende settings menu.
+ */
 static void HTMenuSettings() {
   if (ImGui::CollapsingHeader("Key Bindings##HTModKeys", ImGuiTreeNodeFlags_None))
     displayAndUpdateKeys();
