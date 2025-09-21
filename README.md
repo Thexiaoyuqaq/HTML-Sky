@@ -8,9 +8,10 @@ Use HTML to execute code before the game does.
 ```
 <Game installation directory>
  ├─Sky.exe
- ├─htmods
- │ ├─<A single mod>
- │ └─<...>
+ ├─htmodloader
+ │ └─mods
+ │   ├─<A single mod>
+ │   └─<...>
  ├─html-config.json
  ├─winhttp.dll
  └─<...>
