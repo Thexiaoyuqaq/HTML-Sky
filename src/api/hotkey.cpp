@@ -80,7 +80,7 @@ void HTHotkeyUpdateCooldown() {
 
 HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegister(
   HMODULE hModule,
-  const char *name,
+  LPCSTR name,
   HTKeyCode defaultCode
 ) {
   return HTHotkeyRegisterEx(hModule, name, defaultCode, HTHotkeyFlags_None);
@@ -88,7 +88,7 @@ HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegister(
 
 HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegisterEx(
   HMODULE hModule,
-  const char *name,
+  LPCSTR name,
   HTKeyCode defaultCode,
   HTHotkeyFlags flags
 ) {
@@ -102,7 +102,14 @@ HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegisterEx(
   rt = getModRuntime(hModule);
   if (!rt)
     return HT_INVALID_HANDLE;
-  
+
+  if (
+    defaultCode != HTKey_None
+    && (defaultCode < HTKey_NamedKey_BEGIN || defaultCode > HTKey_NamedKey_END)
+  )
+    // Register fails when the defaultCode is invalid.
+    return HT_INVALID_HANDLE;
+
   auto it = rt->keyBinds.find(name);
   if (it != rt->keyBinds.end())
     // We won't override prewritten key code.
@@ -155,7 +162,9 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyBind(
     std::lock_guard<std::mutex> lock(gModDataLock);
     gHotkeyCallbacks[kb->key].erase(kb);
     kb->key = key;
-    gHotkeyCallbacks[key].insert(kb);
+    if (key)
+      // We won't dispatch HTKey_None as an event.
+      gHotkeyCallbacks[key].insert(kb);
   }
 
   // Trigger an event.
@@ -199,7 +208,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyListen(
 
 HTMLAPIATTR HTStatus HTMLAPI HTHotkeyUnlisten(
   HTHandle hKey,
-  void *reserved
+  LPVOID reserved
 ) {
   ModKeyBind *kb;
 

@@ -14,7 +14,7 @@ static std::shared_mutex gMutex;
 
 HTMLAPIATTR PFN_HTVoidFunction HTMLAPI HTGetProcAddr(
   HMODULE hModule,
-  const char *name
+  LPCSTR name
 ) {
   std::lock_guard<std::mutex> lock(gModDataLock);
 
@@ -34,7 +34,7 @@ HTMLAPIATTR PFN_HTVoidFunction HTMLAPI HTGetProcAddr(
 
 HTMLAPIATTR HTStatus HTMLAPI HTCommRegFunction(
   HMODULE hModule,
-  const char *name,
+  LPCSTR name,
   PFN_HTVoidFunction func
 ) {
   std::lock_guard<std::mutex> lock(gModDataLock);
@@ -52,7 +52,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommRegFunction(
 }
 
 HTMLAPIATTR HTStatus HTMLAPI HTCommOnEvent(
-  const char *name,
+  LPCSTR name,
   PFN_HTEventCallback callback
 ) {
   std::unique_lock<std::shared_mutex> lock(gMutex);
@@ -66,7 +66,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommOnEvent(
 }
 
 HTMLAPIATTR HTStatus HTMLAPI HTCommOffEvent(
-  const char *name,
+  LPCSTR name,
   PFN_HTEventCallback callback
 ) {
   std::unique_lock<std::shared_mutex> lock(gMutex);
@@ -87,9 +87,9 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommOffEvent(
 }
 
 HTMLAPIATTR HTStatus HTMLAPI HTCommEmitEvent(
-  const char *name,
-  void *reserved,
-  void *data
+  LPCSTR name,
+  LPVOID reserved,
+  LPVOID data
 ) {
   std::vector<PFN_HTEventCallback> localCallbacks;
 

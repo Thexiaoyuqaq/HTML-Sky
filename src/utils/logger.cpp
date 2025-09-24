@@ -1,8 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdarg.h>
-
-#include "includes/aliases.h"
+#include "htinternal.h"
 
 static FILE *gLogFile = NULL;
 

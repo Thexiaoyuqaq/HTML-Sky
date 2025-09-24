@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 #include <windows.h>
 
-#include "includes/aliases.h"
+#include "htaliases.h"
 #include "includes/htmodloader.h"
 
 /**
@@ -211,7 +211,7 @@ HTMLAPIATTR void *HTMLAPI HTSigScanFunc(
 HTMLAPIATTR HTStatus HTMLAPI HTSigScanFuncEx(
   const HTSignature **signature,
   HTHookFunction **func,
-  u32 size
+  UINT32 size
 ) {
   HTStatus result = HT_SUCCESS;
   const HTSignature *sig;

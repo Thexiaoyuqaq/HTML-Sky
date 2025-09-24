@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <mutex>
 #include "includes/htmodloader.h"
-#include "utils/globals.h"
 #include "utils/texts.h"
 #include "htinternal.h"
 

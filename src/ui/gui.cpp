@@ -8,7 +8,6 @@
 #include "imgui_impl_vulkan.h"
 #include "vulkan/vulkan.h"
 
-#include "utils/globals.h"
 #include "utils/texts.h"
 #include "htinternal.h"
 
@@ -35,7 +34,7 @@ static inline bool isNamedKey(HTKeyCode key) {
 /**
  * Modified from ImGui. Get the name string of a key.
  */
-static const char *getKeyName(HTKeyCode key) {
+HTMLAPIATTR const char *HTMLAPI HTHotkeyGetName(HTKeyCode key) {
   if (key == HTKey_None)
     return "None";
   if (!isNamedKey(key))
@@ -166,7 +165,7 @@ Cancel:
       // Capture any key inputs and write the captured key into the ModKeyBind
       // struct.
       goto BindKey;
-  } else if (ImGui::Button(getKeyName(kb->key), ImVec2(HOTKEY_DISPLAY_WIDTH, 0)))
+  } else if (ImGui::Button(HTHotkeyGetName(kb->key), ImVec2(HOTKEY_DISPLAY_WIDTH, 0)))
     // Trigger key modification.
     gActiveKey = kb;
   

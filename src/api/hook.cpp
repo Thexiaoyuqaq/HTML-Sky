@@ -11,9 +11,9 @@
 static std::mutex gMutex;
 
 HTMLAPIATTR HTStatus HTMLAPI HTInstallHook(
-  void *fn,
-  void *detour,
-  void **origin
+  LPVOID fn,
+  LPVOID detour,
+  LPVOID *origin
 ) {
   std::lock_guard<std::mutex> lock(gMutex);
   if (MH_CreateHook(fn, detour, origin) == MH_OK)
@@ -22,7 +22,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTInstallHook(
 }
 
 HTMLAPIATTR HTStatus HTMLAPI HTEnableHook(
-  void *fn
+  LPVOID fn
 ) {
   std::lock_guard<std::mutex> lock(gMutex);
   if (MH_EnableHook(fn) == MH_OK)
@@ -31,7 +31,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTEnableHook(
 }
 
 HTMLAPIATTR HTStatus HTMLAPI HTDisableHook(
-  void *fn
+  LPVOID fn
 ) {
   std::lock_guard<std::mutex> lock(gMutex);
   if (MH_DisableHook(fn) == MH_OK)

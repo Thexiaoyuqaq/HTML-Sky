@@ -4,15 +4,14 @@
 #include <stdlib.h>
 #include <unordered_set>
 #include <mutex>
-#include "includes/aliases.h"
-#include "utils/globals.h"
 #include "includes/htmodloader.h"
+#include "htinternal.h"
 
 static std::mutex gMutex;
 // Stores pointers to all allocated mem blocks.
 static std::unordered_set<void *> gAllocated;
 
-HTMLAPIATTR void *HTMLAPI HTMemAlloc(u64 size) {
+HTMLAPIATTR LPVOID HTMLAPI HTMemAlloc(UINT64 size) {
   std::lock_guard<std::mutex> lock(gMutex);
   void *result = HeapAlloc(gHeap, 0, size);
   if (result)
@@ -20,7 +19,7 @@ HTMLAPIATTR void *HTMLAPI HTMemAlloc(u64 size) {
   return result;
 }
 
-HTMLAPIATTR void *HTMLAPI HTMemNew(u64 count, u64 size) {
+HTMLAPIATTR LPVOID HTMLAPI HTMemNew(UINT64 count, UINT64 size) {
   std::lock_guard<std::mutex> lock(gMutex);
   void *result = HeapAlloc(gHeap, 0, count * size);
   if (result)
@@ -28,7 +27,7 @@ HTMLAPIATTR void *HTMLAPI HTMemNew(u64 count, u64 size) {
   return result;
 }
 
-HTMLAPIATTR HTStatus HTMLAPI HTMemFree(void *pointer) {
+HTMLAPIATTR HTStatus HTMLAPI HTMemFree(LPVOID pointer) {
   std::lock_guard<std::mutex> lock(gMutex);
   auto it = gAllocated.find(pointer);
 

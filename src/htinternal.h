@@ -11,14 +11,29 @@
 
 #include "imgui.h"
 
-#include "includes/aliases.h"
 #include "includes/htmodloader.h"
-#include "utils/logger.h"
-#include "utils/globals.h"
+#include "htaliases.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// ----------------------------------------------------------------------------
+// [SECTION] Mod loader globals.
+// ----------------------------------------------------------------------------
+
+extern HTGameStatus gGameStatus;
+extern char gPathDll[MAX_PATH]
+  , gPathGameExe[MAX_PATH]
+  , gPathLayerConfig[MAX_PATH]
+  , gPathData[MAX_PATH]
+  , gPathMods[MAX_PATH]
+  , gPathGuiIni[MAX_PATH];
+extern wchar_t gPathModsWide[MAX_PATH]
+  , gPathDataWide[MAX_PATH];
+extern HANDLE gHeap
+  , gEventGuiInit;
+extern HMODULE gModLoaderHandle;
 
 /**
  * Convert wchar_t to UTF-8.
@@ -40,6 +55,23 @@ static inline void wcstoutf8(const wchar_t *wcs, char *utf8, i32 max) {
   free(buf);
   utf8[max - 1] = 0;
 }
+
+// ----------------------------------------------------------------------------
+// [SECTION] Mod loader logger.
+// ----------------------------------------------------------------------------
+
+#define LOGI(format, ...) HTLogA("[INFO] " format, ##__VA_ARGS__)
+#define WLOGI(format, ...) HTLogW(L"[INFO] " format, ##__VA_ARGS__)
+#define LOGW(format, ...) HTLogA("[WARN] " format, ##__VA_ARGS__)
+#define WLOGW(format, ...) HTLogW(L"[WARN] " format, ##__VA_ARGS__)
+#define LOGE(format, ...) HTLogA("[ERR] " format, ##__VA_ARGS__)
+#define WLOGE(format, ...) HTLogW(L"[ERR] " format, ##__VA_ARGS__)
+#define LOGEF(format, ...) HTLogA("[ERR][FATAL] " format, ##__VA_ARGS__)
+#define WLOGEF(format, ...) HTLogW(L"[ERR][FATAL] " format, ##__VA_ARGS__)
+
+void HTInitLogger(const wchar_t *fileName, i08 allocConsole);
+void HTLogA(const char *format, ...);
+void HTLogW(const wchar_t *format, ...);
 
 // ----------------------------------------------------------------------------
 // [SECTION] Mod loader functions.

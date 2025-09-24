@@ -17,8 +17,6 @@
 #include <vector>
 #include <map>
 
-#include "includes/aliases.h"
-#include "utils/globals.h"
 #include "htinternal.h"
 
 // ----------------------------------------------------------------------------

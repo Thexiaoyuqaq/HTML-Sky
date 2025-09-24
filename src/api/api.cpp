@@ -1,7 +1,6 @@
 // ----------------------------------------------------------------------------
 // Basic APIs of HT's Mod Loader.
 // ----------------------------------------------------------------------------
-#include "utils/globals.h"
 #include "htinternal.h"
 
 HTMLAPIATTR void HTMLAPI HTGetGameStatus(
@@ -12,7 +11,7 @@ HTMLAPIATTR void HTMLAPI HTGetGameStatus(
 }
 
 HTMLAPIATTR void HTMLAPI HTGetGameExeFolder(
-  char *result,
+  LPSTR result,
   u64 maxLen
 ) {
   if (!result)
@@ -21,7 +20,7 @@ HTMLAPIATTR void HTMLAPI HTGetGameExeFolder(
 }
 
 HTMLAPIATTR void HTMLAPI HTGetModFolder(
-  char *result,
+  LPSTR result,
   u64 maxLen
 ) {
   if (!result)
@@ -30,7 +29,7 @@ HTMLAPIATTR void HTMLAPI HTGetModFolder(
 }
 
 HTMLAPIATTR HMODULE HTMLAPI HTGetModuleHandle(
-  const char *module
+  LPCSTR module
 ) {
   HMODULE result = nullptr;
 
@@ -79,11 +78,12 @@ HTMLAPIATTR HTHandle HTMLAPI HTGetModManifest(
 HTMLAPIATTR u32 HTMLAPI HTGetModInfoFrom(
   HTHandle hManifest,
   HTModInfoFields info,
-  void *out,
-  u32 maxLen
+  LPVOID out,
+  UINT32 maxLen
 ) {
   if (!checkHandleType(hManifest, HTHandleType_Manifest))
     return 0;
+
   ModManifest *manifest = (ModManifest *)hManifest;
   u64 size;
 
@@ -115,5 +115,9 @@ HTMLAPIATTR u32 HTMLAPI HTGetModInfoFrom(
         return 0;
       memcpy_s(out, maxLen, manifest->meta.packageName.c_str(), size);
       return size;
+    default:
+      break;
   }
+
+  return 0;
 }

@@ -4,10 +4,7 @@
 #include <cmath>
 #include "cJSON.h"
 
-#include "includes/aliases.h"
 #include "includes/htmodloader.h"
-#include "utils/logger.h"
-#include "utils/globals.h"
 #include "utils/texts.h"
 #include "htinternal.h"
 

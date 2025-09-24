@@ -18,7 +18,7 @@ extern "C" {
  * indicates the time elapsed since the last frame.
  */
 __declspec(dllexport) void HTMLAPI HTModRenderGui(
-  f32 timeElapesed, void *reserved);
+  float timeElapesed, void *reserved);
 __declspec(dllexport) HTStatus HTMLAPI HTModOnInit(
   void *reserved);
 __declspec(dllexport) HTStatus HTMLAPI HTModOnEnable(

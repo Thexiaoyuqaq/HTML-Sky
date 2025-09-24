@@ -8,9 +8,6 @@
 #include "MinHook.h"
 
 #include "proxy/winhttp-proxy.h"
-#include "includes/aliases.h"
-#include "utils/globals.h"
-#include "utils/logger.h"
 #include "utils/texts.h"
 #include "htinternal.h"
 
