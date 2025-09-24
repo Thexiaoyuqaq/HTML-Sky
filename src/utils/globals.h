@@ -14,7 +14,8 @@ extern char gPathDll[MAX_PATH]
   , gPathGameExe[MAX_PATH]
   , gPathLayerConfig[MAX_PATH]
   , gPathData[MAX_PATH]
-  , gPathMods[MAX_PATH];
+  , gPathMods[MAX_PATH]
+  , gPathGuiIni[MAX_PATH];
 extern wchar_t gPathModsWide[MAX_PATH]
   , gPathDataWide[MAX_PATH];
 extern HANDLE gHeap

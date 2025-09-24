@@ -23,6 +23,8 @@ char gPathMods[MAX_PATH] = {0};
 wchar_t gPathDataWide[MAX_PATH] = {0};
 // Path to the mods folder, in wide char.
 wchar_t gPathModsWide[MAX_PATH] = {0};
+// Path to ImGui .ini file. This string is formatted in UTF-8.
+char gPathGuiIni[MAX_PATH] = {0};
 
 // Mod loader dll handle.
 HMODULE gModLoaderHandle = NULL;

@@ -28,6 +28,7 @@ static HMODULE hWinHttp;
  */
 static i32 initPaths(HMODULE hModule) {
   char *p;
+  wchar_t tmp[MAX_PATH];
 
   GetModuleFileNameA(hModule, gPathDll, MAX_PATH);
   GetModuleFileNameA(nullptr, gPathGameExe, MAX_PATH);
@@ -65,10 +66,16 @@ static i32 initPaths(HMODULE hModule) {
     gPathModsWide,
     MAX_PATH);
 
+  // Create mod data folders.
   if (!folderExists(gPathDataWide))
     CreateDirectoryW(gPathDataWide, nullptr);
   if (!folderExists(gPathModsWide))
     CreateDirectoryW(gPathModsWide, nullptr);
+
+  // ImGui uses UTF-8 codepage in paths, so we need the conversion below.
+  wcscpy(tmp, gPathDataWide);
+  wcscat(tmp, L"\\htmlgui.ini");
+  wcstoutf8(tmp, gPathGuiIni, MAX_PATH);
 
   return 1;
 }

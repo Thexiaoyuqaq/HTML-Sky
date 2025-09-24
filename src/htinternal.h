@@ -20,6 +20,27 @@
 extern "C" {
 #endif
 
+/**
+ * Convert wchar_t to UTF-8.
+ */
+static inline void wcstoutf8(const wchar_t *wcs, char *utf8, i32 max) {
+  char *buf;
+  i32 size;
+
+  if (!wcs || !utf8)
+    return;
+
+  *utf8 = 0;
+  size = WideCharToMultiByte(CP_UTF8, 0, wcs, -1, NULL, 0, NULL, NULL);
+  buf = (char *)malloc(size);
+  if (!buf)
+    return;
+  WideCharToMultiByte(CP_UTF8, 0, wcs, -1, buf, size, NULL, NULL);
+  strcpy_s(utf8, max, buf);
+  free(buf);
+  utf8[max - 1] = 0;
+}
+
 // ----------------------------------------------------------------------------
 // [SECTION] Mod loader functions.
 // ----------------------------------------------------------------------------

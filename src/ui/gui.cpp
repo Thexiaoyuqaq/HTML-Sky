@@ -242,7 +242,8 @@ void HTInitGUI() {
   ImGui_ImplWin32_Init(gGameStatus.window);
   ImGuiIO &io = ImGui::GetIO();
   ImGuiStyle &style = ImGui::GetStyle();
-  io.IniFilename = io.LogFilename = nullptr;
+  io.IniFilename = gPathGuiIni;
+  io.LogFilename = nullptr;
 
   // Scale the window by dpi.
   f32 dpiScale = ImGui_ImplWin32_GetDpiScaleForHwnd(gGameStatus.window);
