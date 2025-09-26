@@ -35,9 +35,7 @@ extern HANDLE gHeap
   , gEventGuiInit;
 extern HMODULE gModLoaderHandle;
 
-/**
- * Convert wchar_t to UTF-8.
- */
+// Convert string from wchar_t to UTF-8.
 static inline void wcstoutf8(const wchar_t *wcs, char *utf8, i32 max) {
   char *buf;
   i32 size;
@@ -77,6 +75,7 @@ void HTLogW(const wchar_t *format, ...);
 // [SECTION] Mod loader functions.
 // ----------------------------------------------------------------------------
 
+// Check if the given file exists.
 static inline i32 fileExists(const wchar_t *path) {
   DWORD attr = GetFileAttributesW(path);
   if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY))
@@ -84,6 +83,7 @@ static inline i32 fileExists(const wchar_t *path) {
   return 1;
 }
 
+// Check if the given folder exists.
 static inline i32 folderExists(const wchar_t *path) {
   DWORD attr = GetFileAttributesW(path);
   if (attr == INVALID_FILE_ATTRIBUTES || !(attr & FILE_ATTRIBUTE_DIRECTORY))
@@ -91,17 +91,23 @@ static inline i32 folderExists(const wchar_t *path) {
   return 1;
 }
 
+// Scan and load all mods.
 HTStatus HTLoadMods();
+// [Invalid] Load a mod and its dependencies.
 void HTLoadSingleMod();
+// [Invalid] Unload a mod and its dependents.
 void HTUnloadSingleMod();
+// [Invalid] Inject a dll.
 HTStatus HTInjectDll(
   const wchar_t *path);
+// [Invalid] Free a dll.
 HTStatus HTRejectDll();
 
 // ----------------------------------------------------------------------------
 // [SECTION] Mod data and handle declarations.
 // ----------------------------------------------------------------------------
 
+// Handle types.
 typedef enum {
   HTHandleType_Invalid = 0,
   HTHandleType_Manifest,
@@ -206,6 +212,7 @@ static inline ModRuntime *getModRuntime(
   return &it->second;
 }
 
+// Register a handle as given type.
 static inline bool registerHandle(
   HTHandle handle,
   HTHandleType type
@@ -219,6 +226,7 @@ static inline bool registerHandle(
   return true;
 }
 
+// Check if the handle is registered as given type.
 static inline bool checkHandleType(
   HTHandle handle,
   HTHandleType type
@@ -237,71 +245,64 @@ static inline bool checkHandleType(
 
 extern HTHandle hKeyMenuToggle;
 
-/**
- * Register the loader itself as a single mod. The package name of the loader
- * is "htmodloader", version is HTML_VERSION_NAME.
- */
+// Register the loader itself as a single mod. The package name of the loader
+// is "htmodloader", version is HTML_VERSION_NAME.
 void HTBootstrap();
 
 // ----------------------------------------------------------------------------
 // [SECTION] Graphic declarations.
 // ----------------------------------------------------------------------------
 
-/**
- * Show console.
- */
-void HTMenuConsole();
+extern bool gShowMainMenu
+  , gShowDebugger;
 
-/**
- * Initialize ImGui style and colors.
- */
+// Initialize ImGui style and colors.
 void HTInitGUI();
-
-/**
- * Destroy ImGui context.
- */
+// Destroy ImGui context.
 void HTDeinitGUI();
-
-/**
- * Show all registered windows. Referenced by layer.cpp.
- */
+// Show all registered windows. Referenced by layer.cpp.
 void HTUpdateGUI();
-
-/**
- * Render HTML main menu. Referenced by bootstrap.cpp.
- */
-void HTMainMenu(
+// Render HTML windows. Referenced by bootstrap.cpp.
+void HTRenderGUI(
   f32, void *);
 
-/**
- * Toggle main menu display status. Referenced by bootstrap.cpp, the callback
- * of hKeyMenuToggle.
- */
+// Toggle main menu display status. Referenced by bootstrap.cpp, the callback
+// of hKeyMenuToggle.
 void HTToggleMenuState(
   HTKeyEvent *);
+
+// Submenus.
+void HTMenuAbouts();
+void HTMenuConsole();
+void HTMenuModList();
+void HTMenuSettings();
+
+// ImGui windows
+void HTWindowDebugger(
+  bool *show);
+void HTWindowMain(
+  bool *show);
+
+// Console functions.
+void HTClearConsole();
+void HTAddConsoleLine(
+  const char* fmt, ...);
 
 // ----------------------------------------------------------------------------
 // [SECTION] Input handler related functions.
 // ----------------------------------------------------------------------------
 
-/**
- * Modified from ImGui. Check whether a key has name string.
- */
+// Modified from ImGui. Check whether a key has name string.
 static inline bool isNamedKey(HTKeyCode key) {
   return key >= HTKey_NamedKey_BEGIN && key < HTKey_NamedKey_END;
 }
 
-/**
- * Install and uninstall window message detour.
- */
+// Install and uninstall window message detour.
 void HTInstallInputHook();
 void HTUninstallInputHook();
 
-/**
- * Map HTKeyCode to ImGuiKey.
- * 
- * NOTE: ImGuiKey can't convert to HTKeyCode.
- */
+// Map HTKeyCode to ImGuiKey.
+// NOTE: ImGuiKey can't convert to HTKeyCode.
 ImGuiKey HTKeyToImGuiKey(
   HTKeyCode key);
 
@@ -309,23 +310,12 @@ ImGuiKey HTKeyToImGuiKey(
 // [SECTION] Key event functions.
 // ----------------------------------------------------------------------------
 
-/**
- * Dispatch a key event to all related callbacks.
- */
+// Call key event callbacks.
 void HTHotkeyDispatch(
   HTKeyCode key, HTKeyEventFlags flags, u08 *userSetBlocked);
 
-/**
- * After changing the key binding, there is a cooldown to prevent key message
- * transmission. This function is used to update the cooldown.
- * 
- * Call this function every frame.
- */
+// Set key event cooldown.
 void HTHotkeyUpdateCooldown();
-
-/**
- * Call this function to set the cooldown and block key events.
- */
 void HTHotkeySetCooldown();
 
 #ifdef __cplusplus

@@ -14,7 +14,7 @@ static std::map<HTKeyCode, std::set<ModKeyBind *>> gHotkeyCallbacks;
 static i32 gKeyModifyCooldown = 0;
 
 /**
- * Call key event callback functions.
+ * Dispatch a key event to all related callbacks.
  */
 void HTHotkeyDispatch(
   HTKeyCode key,
@@ -70,10 +70,19 @@ void HTHotkeyDispatch(
     *userSetBlocked = 1;
 }
 
+/**
+ * Call this function to set the cooldown and block key events.
+ */
 void HTHotkeySetCooldown() {
   gKeyModifyCooldown = HOTKEY_MODIFY_COOLDOWN;
 }
 
+/**
+ * After changing the key binding, there is a cooldown to prevent key message
+ * transmission. This function is used to update the cooldown.
+ * 
+ * Call this function every frame.
+ */
 void HTHotkeyUpdateCooldown() {
   if (gKeyModifyCooldown > 0)
     gKeyModifyCooldown--;

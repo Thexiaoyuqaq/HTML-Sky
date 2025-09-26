@@ -53,5 +53,5 @@ void HTBootstrap() {
   runtimeSelf->manifest = manifestSelf;
   runtimeSelf->loaderFunc.pfn_HTModOnEnable = nullptr;
   runtimeSelf->loaderFunc.pfn_HTModOnInit = modOnInit;
-  runtimeSelf->loaderFunc.pfn_HTModRenderGui = HTMainMenu;
+  runtimeSelf->loaderFunc.pfn_HTModRenderGui = HTRenderGUI;
 }

@@ -11,216 +11,8 @@
 #include "utils/texts.h"
 #include "htinternal.h"
 
-// Widget widths.
-#define HOTKEY_DISPLAY_WIDTH 120.0
-#define HOTKEY_RESET_WIDTH 65.0
-#define HOTKEY_BUTTONS_WIDTH (HOTKEY_DISPLAY_WIDTH + HOTKEY_RESET_WIDTH)
-
-static bool gShowMainMenu = true
-  , gFirstFrame = true;
-static const ImVec4 modNameColor(1, 1, 1, 1)
-  , modDescColor(0.75, 0.75, 0.75, 1);
-static float gMenuKeyBindMaxPosX = 0;
-static ModKeyBind *gActiveKey = nullptr;
-static char gFakeBuffer[5] = {0};
-
-/**
- * Render mod list tab item.
- */
-static void HTMenuAbouts() {
-  ImGui::Text("HT's Mod Loader v" HTML_VERSION_NAME " by HTMonkeyG");
-  ImGui::Text("A mod loader developed for Sky:CotL.");
-  ImGui::TextLinkOpenURL(
-    "<https://www.github.com/HTMonkeyG/HTML-Sky>",
-    "https://www.github.com/HTMonkeyG/HTML-Sky");
-}
-
-/**
- * Render mod list tab item.
- */
-static void HTMenuModList() {
-  i32 i = 0;
-
-  if (!ImGui::BeginChild("##HTModList"))
-    return (void)ImGui::EndChild();
-  
-  ImGui::PushID("##HTModListItems");
-  ImVec2 size(0, ImGui::GetTextLineHeight() * 4 + 6);
-  ImVec2 spacing = ImGui::GetStyle().ItemSpacing;
-  spacing.y = 1;
-  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, spacing);
-  ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(3, 3));
-  for (auto it = gModDataLoader.begin(); it != gModDataLoader.end(); ++it, i++) {
-    ModManifest &manifest = it->second;
-
-    // Show mod info.
-    ImGuiID childId = ImGui::GetID((void *)(u64)i);
-    ImGui::BeginChild(
-      childId,
-      size,
-      ImGuiChildFlags_Borders,
-      ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-
-    // Show mod name.
-    ImGui::TextColored(modNameColor, "%s", manifest.modName.data());
-
-    // Show mod description.
-    ImGui::PushStyleColor(ImGuiCol_Text, modDescColor);
-    ImGui::TextWrapped("%s", manifest.description.data());
-    ImGui::PopStyleColor();
-
-    ImGui::EndChild();
-  }
-  ImGui::PopStyleVar(2);
-  ImGui::PopID();
-
-  ImGui::EndChild();
-}
-
-static HTKeyCode waitForKeyPress() {
-  ImGuiIO &io = ImGui::GetIO();
-  for (HTKeyCode i = HTKey_NamedKey_BEGIN; i < HTKey_NamedKey_END; i = (HTKeyCode)(i + 1)) {
-    ImGuiKey keyCode = HTKeyToImGuiKey(i);
-    if (!ImGui::IsKeyPressed(keyCode))
-      continue;
-    if (keyCode == ImGuiKey_MouseWheelY) {
-      if (io.MouseWheel > 0)
-        return HTKey_MouseWheelUp;
-      if (io.MouseWheel < 0)
-        return HTKey_MouseWheelDown;
-    } else if (keyCode == ImGuiKey_MouseWheelX) {
-      if (io.MouseWheelH > 0)
-        return HTKey_MouseWheelLeft;
-      if (io.MouseWheelH < 0)
-        return HTKey_MouseWheelRight;
-    }
-    return i;
-  }
-  return HTKey_None;
-}
-
-static i32 keyBindWidget(HTKeyCode *key) {
-  ImGuiIO &io = ImGui::GetIO();
-
-  gFakeBuffer[0] = 0;
-
-  // Modify a key.
-  io.WantCaptureKeyboard = true;
-  ImGui::SetNextItemWidth(HOTKEY_DISPLAY_WIDTH);
-  ImGui::InputText(
-    "##KeyModify",
-    gFakeBuffer,
-    sizeof(gFakeBuffer));
-  bool hovered = ImGui::IsItemHovered();
-
-  if (hovered)
-    // Forcely capture the keyboard inputs if the input area is hovered.
-    ImGui::SetKeyboardFocusHere(-1);
-
-  HTKeyCode keyPressed = waitForKeyPress();
-  if (keyPressed == HTKey_None)
-    // There's no key's pressed, do nothing.
-    return 0;
-  else if ((keyPressed == HTKey_MouseLeft || keyPressed == HTKey_MouseRight) && !hovered)
-    // If clicked other region, then cancel current key editing.
-    return -1;
-  else if (keyPressed == HTKey_Escape)
-    // Clear key binding, which means setting it to HTKey_None.
-    *key = HTKey_None;
-  else
-    // Capture any key inputs and write the captured key into the ModKeyBind
-    // struct.
-    *key = keyPressed;
-
-  return 1;
-}
-
-static void showSingleKeyBind(
-  ModKeyBind *kb,
-  f32 cursor
-) {
-  f32 x;
-
-  // Show key display name.
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text(kb->displayName.c_str());
-  ImGui::SameLine();
-
-  // Calculate the max pos X of all the texts, for a better align.
-  x = ImGui::GetCursorPosX();
-  if (gMenuKeyBindMaxPosX < x)
-    gMenuKeyBindMaxPosX = x;
-
-  // Right align, show current key.
-  ImGui::SetCursorPosX(cursor);
-  if (gActiveKey == kb) {
-    // If 
-    HTKeyCode key;
-    i32 t = keyBindWidget(&key);
-    if (t) {
-      gActiveKey = nullptr;
-      if (t == 1)
-        (void)HTHotkeyBind(kb, key);
-    }
-  } else {
-    if (ImGui::Button(HTHotkeyGetName(kb->key), ImVec2(HOTKEY_DISPLAY_WIDTH, 0)))
-      // Trigger key modification.
-      gActiveKey = kb;
-  }
-
-  ImGui::SameLine();
-  // Show reset button.
-  ImGui::BeginDisabled(kb->defaultKey == kb->key);
-  if (ImGui::Button("Reset", ImVec2(HOTKEY_RESET_WIDTH, 0)))
-    // Reset key bind.
-    (void)HTHotkeyBind((HTHandle)kb, kb->defaultKey);
-  ImGui::EndDisabled();
-
-  if (gActiveKey)
-    HTHotkeySetCooldown();
-  HTHotkeyUpdateCooldown();
-}
-
-/**
- * Display key binds menu, and handle key bind modification.
- */
-static void displayAndUpdateKeys() {
-  f32 windowPadding = ImGui::GetStyle().WindowPadding.x
-    , cursor;
-
-  // Calculate cursor pos for right alignment.
-  cursor = ImGui::GetContentRegionAvail().x + ImGui::GetCursorPosX();
-  cursor -= HOTKEY_BUTTONS_WIDTH + windowPadding;
-  if (cursor <= gMenuKeyBindMaxPosX)
-    cursor = gMenuKeyBindMaxPosX;
-
-  ImGui::PushTextWrapPos(500.0);
-  for (auto modIt = gModDataRuntime.begin(); modIt != gModDataRuntime.end(); modIt++) {
-    ModRuntime *rt = &modIt->second;
-    if (rt->keyBinds.empty())
-      continue;
-
-    // Mod name.
-    ImGui::SeparatorText(rt->manifest->modName.c_str());
-
-    // Keys.
-    for (auto keyIt = rt->keyBinds.begin(); keyIt != rt->keyBinds.end(); keyIt++) {
-      ModKeyBind *kb = &keyIt->second;
-      ImGui::PushID((void *)kb);
-      showSingleKeyBind(kb, cursor);
-      ImGui::PopID();
-    }
-  }
-  ImGui::PopTextWrapPos();
-}
-
-/**
- * Render settings menu.
- */
-static void HTMenuSettings() {
-  if (ImGui::CollapsingHeader("Key Bindings##HTModKeys", ImGuiTreeNodeFlags_None))
-    displayAndUpdateKeys();
-}
+bool gShowMainMenu = true
+  , gShowDebugger = false;
 
 /**
  * Initialize ImGui context and window message hook.
@@ -277,7 +69,7 @@ void HTInitGUI() {
 }
 
 /**
- * Shutdown ImGui. Unused.
+ * Shutdown ImGui. Currently unused.
  */
 void HTDeinitGUI() {
   ImGui_ImplVulkan_Shutdown();
@@ -285,6 +77,9 @@ void HTDeinitGUI() {
   ImGui::DestroyContext();
 }
 
+/**
+ * Render all windows registered by mods.
+ */
 void HTUpdateGUI() {
   ImGuiIO &io = ImGui::GetIO();
 
@@ -296,40 +91,11 @@ void HTUpdateGUI() {
   }
 }
 
-void HTMainMenu(f32, void *) {
-  if (!gShowMainMenu)
-    return;
-
-  if (gFirstFrame) {
-    // Resize window on the first frame.
-    ImGui::SetNextWindowSize(ImVec2(480, 320));
-    gFirstFrame = false;
-  }
-
-  if (!ImGui::Begin("HTML Main Menu", &gShowMainMenu))
-    return (void)ImGui::End();
-  
-  if (ImGui::BeginTabBar("HTNavMain")) {
-    if (ImGui::BeginTabItem("Abouts")) {
-      HTMenuAbouts();
-      ImGui::EndTabItem();
-    }
-    if (ImGui::BeginTabItem("Console")) {
-      HTMenuConsole();
-      ImGui::EndTabItem();
-    }
-    if (ImGui::BeginTabItem("Mods")) {
-      HTMenuModList();
-      ImGui::EndTabItem();
-    }
-    if (ImGui::BeginTabItem("Settings")) {
-      HTMenuSettings();
-      ImGui::EndTabItem();
-    }
-    ImGui::EndTabBar();
-  }
-  
-  ImGui::End();
+void HTRenderGUI(f32, void *) {
+  if (gShowDebugger)
+    HTWindowDebugger(&gShowDebugger);
+  if (gShowMainMenu)
+    HTWindowMain(&gShowMainMenu);
 }
 
 void HTToggleMenuState(HTKeyEvent *event) {
