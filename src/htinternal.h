@@ -56,6 +56,49 @@ static inline void wcstoutf8(const wchar_t *wcs, char *utf8, i32 max) {
   utf8[max - 1] = 0;
 }
 
+// Convert UTF-8 to UTF-16LE, returned std::wstring.
+static inline std::wstring utf8ToWchar(const char *input) {
+  if (!input)
+    return std::wstring();
+  u64 len = strlen(input);
+  std::wstring result;
+  i32 size = MultiByteToWideChar(CP_UTF8, 0, input, len, nullptr, 0);
+  result.resize(size);
+  MultiByteToWideChar(CP_UTF8, 0, input, len, &result[0], size);
+  return result;
+}
+
+// Convert UTF-16LE to UTF-8, returned std::string.
+static inline std::string wcharToUtf8(const wchar_t *input) {
+  if (!input)
+    return std::string();
+  std::string result;
+  i32 size = WideCharToMultiByte(CP_UTF8, 0, input, -1, nullptr, 0, nullptr, nullptr);
+  result.resize(size);
+  WideCharToMultiByte(CP_UTF8, 0, input, -1, &result[0], size, nullptr, nullptr);
+  return result;
+}
+
+// Read file as UTF-8 encoding with _wfopen.
+static inline std::string HTiReadFileAsUtf8(std::wstring path) {
+  std::string buffer;
+  FILE *fd = _wfopen(path.c_str(), L"rb");
+  u64 size;
+
+  if (!fd)
+    return std::string();
+
+  fseek(fd, 0, SEEK_END);
+  size = ftell(fd);
+  rewind(fd);
+  buffer.resize(size + 1);
+  fread(buffer.data(), sizeof(char), size, fd);
+  buffer[size] = 0;
+  fclose(fd);
+
+  return buffer;
+}
+
 // ----------------------------------------------------------------------------
 // [SECTION] Mod loader logger.
 // ----------------------------------------------------------------------------
@@ -78,7 +121,7 @@ void HTLogW(const wchar_t *format, ...);
 // ----------------------------------------------------------------------------
 
 // Check if the given file exists.
-static inline i32 fileExists(const wchar_t *path) {
+static inline i32 HTiFileExists(const wchar_t *path) {
   DWORD attr = GetFileAttributesW(path);
   if (attr == INVALID_FILE_ATTRIBUTES || (attr & FILE_ATTRIBUTE_DIRECTORY))
     return 0;
@@ -86,7 +129,7 @@ static inline i32 fileExists(const wchar_t *path) {
 }
 
 // Check if the given folder exists.
-static inline i32 folderExists(const wchar_t *path) {
+static inline i32 HTiFolderExists(const wchar_t *path) {
   DWORD attr = GetFileAttributesW(path);
   if (attr == INVALID_FILE_ATTRIBUTES || !(attr & FILE_ATTRIBUTE_DIRECTORY))
     return 0;
@@ -205,7 +248,7 @@ extern std::mutex gModDataLock;
 
 // We assume that the API function has already obtained the mutex when calling
 // the following function.
-static inline ModRuntime *getModRuntime(
+static inline ModRuntime *HTiGetModRuntime(
   HMODULE hModule
 ) {
   auto it = gModDataRuntime.find(hModule);
@@ -215,7 +258,7 @@ static inline ModRuntime *getModRuntime(
 }
 
 // Register a handle as given type.
-static inline bool registerHandle(
+static inline bool HTiRegisterHandle(
   HTHandle handle,
   HTHandleType type
 ) {
@@ -229,7 +272,7 @@ static inline bool registerHandle(
 }
 
 // Check if the handle is registered as given type.
-static inline bool checkHandleType(
+static inline bool HTiCheckHandleType(
   HTHandle handle,
   HTHandleType type
 ) {
@@ -295,7 +338,7 @@ void HTAddConsoleLine(
 // ----------------------------------------------------------------------------
 
 // Modified from ImGui. Check whether a key has name string.
-static inline bool isNamedKey(HTKeyCode key) {
+static inline bool HTiIsNamedKey(HTKeyCode key) {
   return key >= HTKey_NamedKey_BEGIN && key < HTKey_NamedKey_END;
 }
 

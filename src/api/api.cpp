@@ -57,7 +57,7 @@ HTMLAPIATTR HMODULE HTMLAPI HTGetModuleHandle(
     ))
       return nullptr;
 
-    if (!checkHandleType((HTHandle)result, HTHandleType_Mod))
+    if (!HTiCheckHandleType((HTHandle)result, HTHandleType_Mod))
       return nullptr;
 
     return result;
@@ -79,11 +79,11 @@ HTMLAPIATTR HTHandle HTMLAPI HTGetModManifest(
   if (!hModule)
     return HT_INVALID_HANDLE;
 
-  ModRuntime *rt = getModRuntime(hModule);
+  ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HT_INVALID_HANDLE;
-  
-  registerHandle((HTHandle)rt->manifest, HTHandleType_Manifest);
+
+  HTiRegisterHandle((HTHandle)rt->manifest, HTHandleType_Manifest);
 
   return (HTHandle)rt->manifest;
 }
@@ -94,7 +94,7 @@ HTMLAPIATTR u32 HTMLAPI HTGetModInfoFrom(
   LPVOID out,
   UINT32 maxLen
 ) {
-  if (!checkHandleType(hManifest, HTHandleType_Manifest))
+  if (!HTiCheckHandleType(hManifest, HTHandleType_Manifest))
     return 0;
 
   ModManifest *manifest = (ModManifest *)hManifest;

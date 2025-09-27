@@ -64,9 +64,9 @@ static i32 initPaths(HMODULE hModule) {
     MAX_PATH);
 
   // Create mod data folders.
-  if (!folderExists(gPathDataWide))
+  if (!HTiFolderExists(gPathDataWide))
     CreateDirectoryW(gPathDataWide, nullptr);
-  if (!folderExists(gPathModsWide))
+  if (!HTiFolderExists(gPathModsWide))
     CreateDirectoryW(gPathModsWide, nullptr);
 
   // ImGui uses UTF-8 codepage in paths, so we need the conversion below.

@@ -20,10 +20,10 @@ HTMLAPIATTR PFN_HTVoidFunction HTMLAPI HTGetProcAddr(
 
   if (!hModule || !name)
     return HTSetErrorAndReturn(HTError_InvalidParam, nullptr);
-  if (!checkHandleType(hModule, HTHandleType_Mod))
+  if (!HTiCheckHandleType(hModule, HTHandleType_Mod))
     return HTSetErrorAndReturn(HTError_InvalidHandle, nullptr);
 
-  ModRuntime *rt = getModRuntime(hModule);
+  ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTSetErrorAndReturn(HTError_InvalidParam, nullptr);
 
@@ -44,10 +44,10 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommRegFunction(
 
   if (!hModule || !name || !func)
     return HTSetErrorAndReturn(HTError_InvalidParam, HT_FAIL);
-  if (!checkHandleType(hModule, HTHandleType_Mod))
+  if (!HTiCheckHandleType(hModule, HTHandleType_Mod))
     return HTSetErrorAndReturn(HTError_InvalidHandle, HT_FAIL);
 
-  rt = getModRuntime(hModule);
+  rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTSetErrorAndReturn(HTError_InvalidHandle, HT_FAIL);
 

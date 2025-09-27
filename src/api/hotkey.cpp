@@ -110,12 +110,12 @@ HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegisterEx(
     // Invalid param.
     return (HTHandle)HTSetErrorAndReturn(HTError_InvalidParam, HT_INVALID_HANDLE);
 
-  rt = getModRuntime(hModule);
+  rt = HTiGetModRuntime(hModule);
   if (!rt)
     // Module handle is invalid.
     return (HTHandle)HTSetErrorAndReturn(HTError_InvalidHandle, HT_INVALID_HANDLE);
 
-  if (defaultCode != HTKey_None && !isNamedKey(defaultCode))
+  if (defaultCode != HTKey_None && !HTiIsNamedKey(defaultCode))
     // Register fails when the defaultCode is invalid.
     return (HTHandle)HTSetErrorAndReturn(HTError_InvalidParam, HT_INVALID_HANDLE);
 
@@ -137,7 +137,7 @@ HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegisterEx(
   result->flags = flags;
 
   gHotkeyCallbacks[result->key].insert(result);
-  registerHandle(result, HTHandleType_Hotkey);
+  HTiRegisterHandle(result, HTHandleType_Hotkey);
 
   return HTSetErrorAndReturn(HTError_Success, result);
 }
@@ -152,7 +152,7 @@ static HTStatus HTHotkeyBindEx(
 
   if (!hKey)
     return HTSetErrorAndReturn(HTError_InvalidParam, HT_FAIL);
-  if (!checkHandleType(hKey, HTHandleType_Hotkey))
+  if (!HTiCheckHandleType(hKey, HTHandleType_Hotkey))
     return HTSetErrorAndReturn(HTError_InvalidHandle, HT_FAIL);
 
   kb = (ModKeyBind *)hKey;
@@ -221,7 +221,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyListen(
 
   if (!hKey || !callback)
     return HTSetErrorAndReturn(HTError_InvalidParam, HT_FAIL);
-  if (!checkHandleType(hKey, HTHandleType_Hotkey))
+  if (!HTiCheckHandleType(hKey, HTHandleType_Hotkey))
     return HTSetErrorAndReturn(HTError_InvalidHandle, HT_FAIL);
 
   kb = (ModKeyBind *)hKey;
@@ -241,7 +241,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyUnlisten(
 
   if (!hKey)
     return HTSetErrorAndReturn(HTError_InvalidParam, HT_FAIL);
-  if (!checkHandleType(hKey, HTHandleType_Hotkey))
+  if (!HTiCheckHandleType(hKey, HTHandleType_Hotkey))
     return HTSetErrorAndReturn(HTError_InvalidHandle, HT_FAIL);
 
   kb = (ModKeyBind *)hKey;
@@ -259,7 +259,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyUnlisten(
 HTMLAPIATTR const char *HTMLAPI HTHotkeyGetName(HTKeyCode key) {
   if (key == HTKey_None)
     return "None";
-  if (!isNamedKey(key))
+  if (!HTiIsNamedKey(key))
     return "Unknown";
 
   return HTKeyNames[key - HTKey_NamedKey_BEGIN];

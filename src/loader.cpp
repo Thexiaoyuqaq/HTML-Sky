@@ -8,27 +8,6 @@
 #include "utils/texts.h"
 #include "htinternal.h"
 
-static std::wstring utf8ToWchar(const char *input) {
-  if (!input)
-    return std::wstring();
-  u64 len = strlen(input);
-  std::wstring result;
-  i32 size = MultiByteToWideChar(CP_UTF8, 0, input, len, nullptr, 0);
-  result.resize(size);
-  MultiByteToWideChar(CP_UTF8, 0, input, len, &result[0], size);
-  return result;
-}
-
-static std::string wcharToUtf8(const wchar_t *input) {
-  if (!input)
-    return std::string();
-  std::string result;
-  i32 size = WideCharToMultiByte(CP_UTF8, 0, input, -1, nullptr, 0, nullptr, nullptr);
-  result.resize(size);
-  WideCharToMultiByte(CP_UTF8, 0, input, -1, &result[0], size, nullptr, nullptr);
-  return result;
-}
-
 static inline i32 parseVersionNumber(
   const char *str,
   u32 *versions
@@ -126,9 +105,6 @@ static i32 parseModManifest(
 ) {
   i32 ret;
   std::wstring folder(gPathModsWide);
-  FILE *fd = nullptr;
-  u64 size;
-  wchar_t *buffer = nullptr;
 
   // Get the mod folder.
   folder += L"\\";
@@ -136,39 +112,21 @@ static i32 parseModManifest(
 
   // Check the manifest.json.
   std::wstring jsonPath = folder + L"\\manifest.json";
-  if (!fileExists(jsonPath.data()))
+  if (!HTiFileExists(jsonPath.data()))
     return 0;
-
-  // Open manifest.json.
-  fd = _wfopen(jsonPath.data(), L"r, ccs=UTF-8");
-  if (!fd)
-    return 0;
-
-  // Read file.
-  fseek(fd, 0, SEEK_END);
-  size = ftell(fd);
-  rewind(fd);
-  buffer = (wchar_t *)malloc((size + 1) * sizeof(wchar_t));
-  if (!buffer) {
-    fclose(fd);
-    return 0;
-  }
-  fread(buffer, sizeof(wchar_t), size, fd);
-  buffer[size] = 0;
-  fclose(fd);
 
   // Save paths.
   manifest->paths.folder = folder;
   manifest->paths.json = jsonPath;
 
-  // Deserialize manifest.
-  std::string content = wcharToUtf8(buffer);
+  // Open manifest.json.
+  std::string content = HTiReadFileAsUtf8(jsonPath);
+
+  // Parse and deserialize the file.
   ret = deserializeManifestJson(
     content.data(),
     manifest);
 
-  // Parse and deserialize the file.
-  free(buffer);
   return ret;
 }
 
@@ -193,7 +151,7 @@ static void scanMods() {
       continue;
     if (!parseModManifest(findData.cFileName, &manifest))
       continue;
-    if (!fileExists(manifest.paths.dll.data()))
+    if (!HTiFileExists(manifest.paths.dll.data()))
       continue;
     
     // When scanning mods, the mod data won't be accessed by multiple threads,
@@ -256,7 +214,7 @@ static void expandMods() {
       getModExportedFunctions(runtimeData);
       it->second.runtime = runtimeData;
 
-      registerHandle(hMod, HTHandleType_Mod);
+      HTiRegisterHandle(hMod, HTHandleType_Mod);
     }
   }
 }
