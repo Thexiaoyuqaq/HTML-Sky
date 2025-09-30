@@ -6,7 +6,7 @@
 
 static bool gFirstFrame = true;
 
-void HTWindowMain(bool *show) {
+void HTiWindowMain(bool *show) {
   if (gFirstFrame && show) {
     // Resize window on the first frame.
     ImGui::SetNextWindowSize(ImVec2(480, 320));
@@ -20,19 +20,19 @@ void HTWindowMain(bool *show) {
   
   if (ImGui::BeginTabBar("HTNavMain")) {
     if (ImGui::BeginTabItem("Abouts")) {
-      HTMenuAbouts();
+      HTiMenuAbouts();
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Console")) {
-      HTMenuConsole();
+      HTiMenuConsole();
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Mods")) {
-      HTMenuModList();
+      HTiMenuModList();
       ImGui::EndTabItem();
     }
     if (ImGui::BeginTabItem("Settings")) {
-      HTMenuSettings();
+      HTiMenuSettings();
       ImGui::EndTabItem();
     }
     ImGui::EndTabBar();
@@ -43,7 +43,7 @@ void HTWindowMain(bool *show) {
   ImGui::End();
 }
 
-void HTWindowDebugger(bool *show) {
+void HTiWindowDebugger(bool *show) {
   if (!ImGui::Begin("HTML Debugger", show))
     return (void)ImGui::End();
 

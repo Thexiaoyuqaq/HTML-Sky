@@ -229,7 +229,7 @@ static DWORD WINAPI onAttach(LPVOID lpParam) {
   optionsPath += L"\\options.json";
   HTiOptionsLoadFromFile(optionsPath.c_str());
 
-  HTLoadMods();
+  HTiLoadMods();
 
   return 0;
 }
@@ -253,10 +253,10 @@ BOOL APIENTRY DllMain(
 
 #ifdef NDEBUG
     // No log file and console.
-    HTInitLogger(nullptr, 0);
+    HTiInitLogger(nullptr, 0);
 #else
     // Create console.
-    HTInitLogger(nullptr, 1);
+    HTiInitLogger(nullptr, 1);
 #endif
     initPaths(hModule);
 

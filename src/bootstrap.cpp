@@ -32,7 +32,7 @@ static HTStatus HTMLAPI modOnInit(void *) {
   return HT_SUCCESS;
 }
 
-void HTBootstrap() {
+void HTiBootstrap() {
   std::lock_guard<std::mutex> lock(gModDataLock);
   ModManifest *manifestSelf = &gModDataLoader[HTTexts_ModLoaderPackageName];
   ModRuntime *runtimeSelf = &gModDataRuntime[gModLoaderHandle];

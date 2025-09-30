@@ -10,7 +10,7 @@ static FILE *gLogFile = NULL;
  * 
  * Must be called EXACTLY ONCE when the dll is attached.
  */
-void HTInitLogger(
+void HTiInitLogger(
   const wchar_t *fileName,
   i08 allocConsole
 ) {
@@ -24,7 +24,7 @@ void HTInitLogger(
   }
 }
 
-void HTLogA(const char *format, ...) {
+void HTiLogA(const char *format, ...) {
   SYSTEMTIME time = {0};
   va_list arg;
 
@@ -44,7 +44,7 @@ void HTLogA(const char *format, ...) {
   va_end(arg);
 }
 
-void HTLogW(const wchar_t *format, ...) {
+void HTiLogW(const wchar_t *format, ...) {
   SYSTEMTIME time = {0};
   va_list arg;
 

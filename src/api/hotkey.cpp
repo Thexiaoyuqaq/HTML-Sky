@@ -16,7 +16,7 @@ static i32 gKeyModifyCooldown = 0;
 /**
  * Dispatch a key event to all related callbacks.
  */
-void HTHotkeyDispatch(
+void HTiHotkeyDispatch(
   HTKeyCode key,
   HTKeyEventFlags flags,
   u08 *userSetBlocked
@@ -73,7 +73,7 @@ void HTHotkeyDispatch(
 /**
  * Call this function to set the cooldown and block key events.
  */
-void HTHotkeySetCooldown() {
+void HTiHotkeySetCooldown() {
   gKeyModifyCooldown = HOTKEY_MODIFY_COOLDOWN;
 }
 
@@ -83,7 +83,7 @@ void HTHotkeySetCooldown() {
  * 
  * Call this function every frame.
  */
-void HTHotkeyUpdateCooldown() {
+void HTiHotkeyUpdateCooldown() {
   if (gKeyModifyCooldown > 0)
     gKeyModifyCooldown--;
 }

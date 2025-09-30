@@ -450,7 +450,7 @@ typedef enum {
   HTKeyEventFlags_MouseWheelLeft,
   HTKeyEventFlags_MouseWheelRight,
 
-  // [Internal] Only for internal HTHotkeyDispatch() function. The flags below
+  // [Internal] Only for internal HTiHotkeyDispatch() function. The flags below
   // will never be set on callbacks.
   HTKeyEventFlags_Repeat = 1 << 16,
   HTKeyEventFlags_Blocked = 1 << 17,

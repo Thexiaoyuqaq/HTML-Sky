@@ -235,8 +235,8 @@ void initMods() {
   }
 }
 
-HTStatus HTLoadMods() {
-  HTBootstrap();
+HTStatus HTiLoadMods() {
+  HTiBootstrap();
   scanMods();
   expandMods();
   initMods();
@@ -244,7 +244,7 @@ HTStatus HTLoadMods() {
   return HT_SUCCESS;
 }
 
-HTStatus HTInjectDll(
+HTStatus HTiInjectDll(
   const wchar_t *path
 ) {
   return HT_SUCCESS;

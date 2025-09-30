@@ -123,8 +123,8 @@ static void showSingleKeyBind(
   ImGui::EndDisabled();
 
   if (gActiveKey)
-    HTHotkeySetCooldown();
-  HTHotkeyUpdateCooldown();
+    HTiHotkeySetCooldown();
+  HTiHotkeyUpdateCooldown();
 }
 
 /**
@@ -168,7 +168,7 @@ static int inputCallback(ImGuiInputTextCallbackData *data) {
   return 0;
 }
 
-void HTAddConsoleLine(const char* fmt, ...) {
+void HTiAddConsoleLine(const char* fmt, ...) {
   char buf[1024];
   va_list args;
   size_t len;
@@ -189,13 +189,13 @@ void HTAddConsoleLine(const char* fmt, ...) {
   gLines.push_back((char *)memcpy(mem, (const void*)buf, len));
 }
 
-void HTClearConsole() {
+void HTiClearConsole() {
   for (int i = 0; i < gLines.Size; i++)
     ImGui::MemFree(gLines[i]);
   gLines.clear();
 }
 
-void HTMenuConsole() {
+void HTiMenuConsole() {
   ImGuiListClipper clipper;
   f32 height;
   bool reclaimFocus = false;
@@ -210,7 +210,7 @@ void HTMenuConsole() {
     // Show texts.
     if (ImGui::BeginPopupContextWindow()) {
       if (ImGui::Selectable("Clear console"))
-        HTClearConsole();
+        HTiClearConsole();
       ImGui::EndPopup();
     }
 
@@ -237,7 +237,7 @@ void HTMenuConsole() {
   )) {
     // Pressed enter.
     reclaimFocus = true;
-    HTAddConsoleLine("%s", gConsoleInputBuffer);
+    HTiAddConsoleLine("%s", gConsoleInputBuffer);
     gConsoleInputBuffer[0] = 0;
   }
 
@@ -257,7 +257,7 @@ static void displayLoaderSettings() {
 /**
  * Render settings menu.
  */
-void HTMenuSettings() {
+void HTiMenuSettings() {
   if (ImGui::CollapsingHeader("Loader Settings"))
     displayLoaderSettings();
   if (ImGui::CollapsingHeader("Key Bindings"))
@@ -271,7 +271,7 @@ void HTMenuSettings() {
 /**
  * Render mod list tab item.
  */
-void HTMenuAbouts() {
+void HTiMenuAbouts() {
   ImGui::Text("HT's Mod Loader v" HTML_VERSION_NAME " by HTMonkeyG");
   ImGui::Text("A mod loader developed for Sky:CotL.");
   ImGui::TextLinkOpenURL(
@@ -282,7 +282,7 @@ void HTMenuAbouts() {
 /**
  * Render mod list tab item.
  */
-void HTMenuModList() {
+void HTiMenuModList() {
   i32 i = 0;
 
   if (!ImGui::BeginChild("##HTModList"))

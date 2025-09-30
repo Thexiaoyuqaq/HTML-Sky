@@ -22,18 +22,18 @@ extern "C" {
 // [SECTION] Mod loader logger.
 // ----------------------------------------------------------------------------
 
-#define LOGI(format, ...) HTLogA("[INFO] " format, ##__VA_ARGS__)
-#define WLOGI(format, ...) HTLogW(L"[INFO] " format, ##__VA_ARGS__)
-#define LOGW(format, ...) HTLogA("[WARN] " format, ##__VA_ARGS__)
-#define WLOGW(format, ...) HTLogW(L"[WARN] " format, ##__VA_ARGS__)
-#define LOGE(format, ...) HTLogA("[ERR] " format, ##__VA_ARGS__)
-#define WLOGE(format, ...) HTLogW(L"[ERR] " format, ##__VA_ARGS__)
-#define LOGEF(format, ...) HTLogA("[ERR][FATAL] " format, ##__VA_ARGS__)
-#define WLOGEF(format, ...) HTLogW(L"[ERR][FATAL] " format, ##__VA_ARGS__)
+#define LOGI(format, ...) HTiLogA("[INFO] " format, ##__VA_ARGS__)
+#define WLOGI(format, ...) HTiLogW(L"[INFO] " format, ##__VA_ARGS__)
+#define LOGW(format, ...) HTiLogA("[WARN] " format, ##__VA_ARGS__)
+#define WLOGW(format, ...) HTiLogW(L"[WARN] " format, ##__VA_ARGS__)
+#define LOGE(format, ...) HTiLogA("[ERR] " format, ##__VA_ARGS__)
+#define WLOGE(format, ...) HTiLogW(L"[ERR] " format, ##__VA_ARGS__)
+#define LOGEF(format, ...) HTiLogA("[ERR][FATAL] " format, ##__VA_ARGS__)
+#define WLOGEF(format, ...) HTiLogW(L"[ERR][FATAL] " format, ##__VA_ARGS__)
 
-void HTInitLogger(const wchar_t *fileName, i08 allocConsole);
-void HTLogA(const char *format, ...);
-void HTLogW(const wchar_t *format, ...);
+void HTiInitLogger(const wchar_t *fileName, i08 allocConsole);
+void HTiLogA(const char *format, ...);
+void HTiLogW(const wchar_t *format, ...);
 
 // ----------------------------------------------------------------------------
 // [SECTION] Mod loader globals and internal functions.
@@ -133,16 +133,16 @@ static inline i32 HTiFolderExists(const wchar_t *path) {
 }
 
 // Scan and load all mods.
-HTStatus HTLoadMods();
+HTStatus HTiLoadMods();
 // [Invalid] Load a mod and its dependencies.
-void HTLoadSingleMod();
+void HTiLoadSingleMod();
 // [Invalid] Unload a mod and its dependents.
-void HTUnloadSingleMod();
+void HTiUnloadSingleMod();
 // [Invalid] Inject a dll.
-HTStatus HTInjectDll(
+HTStatus HTiInjectDll(
   const wchar_t *path);
 // [Invalid] Free a dll.
-HTStatus HTRejectDll();
+HTStatus HTiRejectDll();
 
 // ----------------------------------------------------------------------------
 // [SECTION] Mod data and handle declarations.
@@ -297,7 +297,7 @@ HTStatus HTiOptionsLoadFromFile(
 // Try to assign the loaded options for a mod's runtime data.
 void HTiOptionsLoadFor(
   ModRuntime *);
-// Mark as needing to save options.
+// MaHTiBootstrapng to save options.
 void HTiOptionsMarkDirty();
 // Save all options to gModLoaderOptions. Called by HTiUpdateGUI().
 void HTiOptionsUpdate(
@@ -314,7 +314,7 @@ extern HTHandle hKeyMenuToggle;
 
 // Register the loader itself as a single mod. The package name of the loader
 // is "htmodloader", version is HTML_VERSION_NAME.
-void HTBootstrap();
+void HTiBootstrap();
 
 // ----------------------------------------------------------------------------
 // [SECTION] Graphic declarations.
@@ -339,20 +339,20 @@ void HTiToggleMenuState(
   HTKeyEvent *);
 
 // Submenus.
-void HTMenuAbouts();
-void HTMenuConsole();
-void HTMenuModList();
-void HTMenuSettings();
+void HTiMenuAbouts();
+void HTiMenuConsole();
+void HTiMenuModList();
+void HTiMenuSettings();
 
 // ImGui windows
-void HTWindowDebugger(
+void HTiWindowDebugger(
   bool *show);
-void HTWindowMain(
+void HTiWindowMain(
   bool *show);
 
 // Console functions.
-void HTClearConsole();
-void HTAddConsoleLine(
+void HTiClearConsole();
+void HTiAddConsoleLine(
   const char* fmt, ...);
 
 // ----------------------------------------------------------------------------
@@ -365,8 +365,8 @@ static inline bool HTiIsNamedKey(HTKeyCode key) {
 }
 
 // Install and uninstall window message detour.
-void HTInstallInputHook();
-void HTUninstallInputHook();
+void HTiInstallInputHook();
+void HTiUninstallInputHook();
 
 // Map HTKeyCode to ImGuiKey.
 // NOTE: ImGuiKey can't convert to HTKeyCode.
@@ -378,12 +378,12 @@ ImGuiKey HTKeyToImGuiKey(
 // ----------------------------------------------------------------------------
 
 // Call key event callbacks.
-void HTHotkeyDispatch(
+void HTiHotkeyDispatch(
   HTKeyCode key, HTKeyEventFlags flags, u08 *userSetBlocked);
 
 // Set key event cooldown.
-void HTHotkeyUpdateCooldown();
-void HTHotkeySetCooldown();
+void HTiHotkeyUpdateCooldown();
+void HTiHotkeySetCooldown();
 
 #ifdef __cplusplus
 }

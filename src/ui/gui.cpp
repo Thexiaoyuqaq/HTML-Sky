@@ -65,7 +65,7 @@ void HTiInitGUI() {
   style.WindowTitleAlign = ImVec2(0.5, 0.5);
 
   // Install window process hook.
-  HTInstallInputHook();
+  HTiInstallInputHook();
 }
 
 /**
@@ -96,9 +96,9 @@ void HTiUpdateGUI() {
 
 void HTiRenderGUI(f32, void *) {
   if (gShowDebugger)
-    HTWindowDebugger(&gShowDebugger);
+    HTiWindowDebugger(&gShowDebugger);
   if (gShowMainMenu)
-    HTWindowMain(&gShowMainMenu);
+    HTiWindowMain(&gShowMainMenu);
 }
 
 void HTiToggleMenuState(HTKeyEvent *event) {

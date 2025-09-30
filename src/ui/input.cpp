@@ -158,7 +158,7 @@ static HTKeyCode vkToInternalKey(
 }
 
 #define HTHotkeyCheck(a, b) \
-  ((void)((isVkDown(a) == isKeyDown) && (HTHotkeyDispatch(b, down | repeat | blockedKey, blocked), 1)))
+  ((void)((isVkDown(a) == isKeyDown) && (HTiHotkeyDispatch(b, down | repeat | blockedKey, blocked), 1)))
 
 /**
  * Modified from ImGui. Dispatch key events to registered callbacks.
@@ -193,7 +193,7 @@ static void HTHotKeyWndProc(
         : HTKeyEventFlags_Up;
 
       if (key == HTKey_PrintScreen && !isKeyDown)
-        HTHotkeyDispatch(key, HTKeyEventFlags_Down | repeat | blockedKey, blocked);
+        HTiHotkeyDispatch(key, HTKeyEventFlags_Down | repeat | blockedKey, blocked);
       else if (vk == VK_SHIFT) {
         HTHotkeyCheck(VK_LSHIFT, HTKey_LeftShift);
         HTHotkeyCheck(VK_LSHIFT, HTKey_LeftShift);
@@ -204,7 +204,7 @@ static void HTHotKeyWndProc(
         HTHotkeyCheck(VK_LMENU, HTKey_LeftAlt);
         HTHotkeyCheck(VK_RMENU, HTKey_RightAlt);
       } else if (key != HTKey_None)
-        HTHotkeyDispatch(key, down | repeat | blockedKey, blocked);
+        HTiHotkeyDispatch(key, down | repeat | blockedKey, blocked);
       break;
     }
     case WM_LBUTTONDOWN:
@@ -226,7 +226,7 @@ static void HTHotKeyWndProc(
         button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1)
           ? HTKey_MouseX1
           : HTKey_MouseX2;
-      HTHotkeyDispatch(button, HTKeyEventFlags_Down | blockedKey, blocked);
+      HTiHotkeyDispatch(button, HTKeyEventFlags_Down | blockedKey, blocked);
       break;
     }
     case WM_LBUTTONUP:
@@ -244,23 +244,23 @@ static void HTHotKeyWndProc(
         button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1)
           ? HTKey_MouseX1
           : HTKey_MouseX2;
-      HTHotkeyDispatch(button, HTKeyEventFlags_Up | blockedKey, blocked);
+      HTiHotkeyDispatch(button, HTKeyEventFlags_Up | blockedKey, blocked);
       break;
     }
     case WM_MOUSEWHEEL: {
       f32 mouseDelta = (f32)GET_WHEEL_DELTA_WPARAM(wParam) / (f32)WHEEL_DELTA;
       if (mouseDelta > 0)
-        HTHotkeyDispatch(HTKey_MouseWheelUp, HTKeyEventFlags_Down | blockedKey, blocked);
+        HTiHotkeyDispatch(HTKey_MouseWheelUp, HTKeyEventFlags_Down | blockedKey, blocked);
       else
-        HTHotkeyDispatch(HTKey_MouseWheelDown, HTKeyEventFlags_Down | blockedKey, blocked);
+        HTiHotkeyDispatch(HTKey_MouseWheelDown, HTKeyEventFlags_Down | blockedKey, blocked);
       break;
     }
     case WM_MOUSEHWHEEL: {
       f32 mouseDelta = (f32)GET_WHEEL_DELTA_WPARAM(wParam) / (f32)WHEEL_DELTA;
       if (mouseDelta > 0)
-        HTHotkeyDispatch(HTKey_MouseWheelRight, HTKeyEventFlags_Down | blockedKey, blocked);
+        HTiHotkeyDispatch(HTKey_MouseWheelRight, HTKeyEventFlags_Down | blockedKey, blocked);
       else
-        HTHotkeyDispatch(HTKey_MouseWheelLeft, HTKeyEventFlags_Down | blockedKey, blocked);
+        HTiHotkeyDispatch(HTKey_MouseWheelLeft, HTKeyEventFlags_Down | blockedKey, blocked);
       break;
     }
   }
@@ -327,7 +327,7 @@ ImGuiKey HTKeyToImGuiKey(HTKeyCode key) {
 /**
  * Hook the window process of the game.
  */
-void HTInstallInputHook() {
+void HTiInstallInputHook() {
   if (!gGameStatus.window)
     return;
   gWndProcOrigin = (WNDPROC)SetWindowLongPtrW(
@@ -339,7 +339,7 @@ void HTInstallInputHook() {
 /**
  * Release the window callback hook of the game.
  */
-void HTUninstallInputHook() {
+void HTiUninstallInputHook() {
   if (gGameStatus.window && gWndProcOrigin)
     (void)SetWindowLongPtrW(
       gGameStatus.window,
