@@ -231,9 +231,16 @@ void initMods() {
   PFN_HTModOnInit fn;
 
   for (auto it = gModDataRuntime.begin(); it != gModDataRuntime.end(); it++) {
+    const char *modName = it->second.manifest->modName.c_str();
     fn = it->second.loaderFunc.pfn_HTModOnInit;
-    if (fn)
-      (void)fn(nullptr);
+
+    // We assume that mod that does not export HTModOnInit() has an independent
+    // initialization (or enabling, see HTiEnableMods() below) process, so we
+    // consider that they are initialized successfully
+    if (!fn || fn(nullptr) == HT_SUCCESS)
+      LOGI("Initialized mod %s.\n", modName);
+    else
+      LOGI("Failed to initialize mod %s.\n", modName);
   }
 }
 
@@ -242,6 +249,22 @@ HTStatus HTiLoadMods() {
   scanMods();
   expandMods();
   initMods();
+
+  return HT_SUCCESS;
+}
+
+HTStatus HTiEnableMods() {
+  PFN_HTModOnEnable fn;
+
+  for (auto it = gModDataRuntime.begin(); it != gModDataRuntime.end(); it++) {
+    const char *modName = it->second.manifest->modName.c_str();
+    fn = it->second.loaderFunc.pfn_HTModOnEnable;
+
+    if (!fn || fn(nullptr) == HT_SUCCESS)
+      LOGI("Enabled mod %s.\n", modName);
+    else
+      LOGI("Failed to enable mod %s.\n", modName);
+  }
 
   return HT_SUCCESS;
 }

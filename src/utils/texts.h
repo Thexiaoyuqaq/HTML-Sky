@@ -1,3 +1,9 @@
+#define HTTexts_VulkanLayer L"\\REGISTRY\\MACHINE\\SOFTWARE\\Khronos\\Vulkan\\ImplicitLayers"
+
+#define HTTexts_WndClassW L"TgcMainWindow"
+#define HTTexts_WndNameInW L"Sky"
+#define HTTexts_WndNameChW L"光·遇"
+
 #define HTTexts_DefaultLayerConfig "{\n"\
   "\"file_format_version\": \"1.0.0\",\n"\
   "\"layer\": {\n"\

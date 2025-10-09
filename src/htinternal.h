@@ -132,8 +132,14 @@ static inline i32 HTiFolderExists(const wchar_t *path) {
   return 1;
 }
 
-// Scan and load all mods.
+// Scan and load all mods, then call the exported HTModOnInit() function of
+// each mod.
+// This function is called after the game window has created.
 HTStatus HTiLoadMods();
+// Enable all mods, that is, call the exported HTModOnEnable() function of
+// each mod.
+// This function is called after ImGui started rendering.
+HTStatus HTiEnableMods();
 // [Invalid] Load a mod and its dependencies.
 void HTiLoadSingleMod();
 // [Invalid] Unload a mod and its dependents.
@@ -307,10 +313,16 @@ void HTiOptionsWriteToFile(
   const wchar_t *);
 
 // ----------------------------------------------------------------------------
-// [SECTION] Bootstrap declarations.
+// [SECTION] Bootstrap and setup declarations.
 // ----------------------------------------------------------------------------
 
 extern HTHandle hKeyMenuToggle;
+
+// Install hooks on WinAPI functions that we need. Setup procedure is in the
+// detour functions on CreateWindowEx().
+void HTiSetupWinHooks();
+// Scan and load mods into the game, then initialize all loaded mods.
+void HTiSetupAll();
 
 // Register the loader itself as a single mod. The package name of the loader
 // is "htmodloader", version is HTML_VERSION_NAME.

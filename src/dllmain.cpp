@@ -16,8 +16,6 @@ typedef LONG (WINAPI *PFN_RegEnumValueA)(
 typedef NTSTATUS (WINAPI *PFN_NtQueryKey)(
   HANDLE, u64, PVOID, ULONG, PULONG);
 
-static PFN_RegEnumValueA fn_RegEnumValueA;
-static std::unordered_map<HKEY, DWORD> gRegKeys;
 static HMODULE hWinHttp;
 
 /**
@@ -78,99 +76,6 @@ static i32 initPaths(HMODULE hModule) {
 }
 
 /**
- * Check if the key name is a Vulkan implicit layer list.
- */
-static i32 checkKeyName(HKEY key) {
-  HMODULE ntdll = GetModuleHandleA("ntdll.dll");
-  PFN_NtQueryKey fn_NtQueryKey;
-  DWORD size = 0;
-  NTSTATUS result = STATUS_SUCCESS;
-  wchar_t *buffer;
-  i32 r = 0;
-
-  if (!key || !ntdll)
-    return 0;
-
-  fn_NtQueryKey = (PFN_NtQueryKey)GetProcAddress(ntdll, "NtQueryKey");
-  if (!fn_NtQueryKey)
-    return 0;
-
-  result = fn_NtQueryKey(key, 3, 0, 0, &size);
-  if (result == STATUS_BUFFER_TOO_SMALL) {
-    buffer = (wchar_t *)malloc(size + 2);
-    if (!buffer)
-      return 0;
-
-    result = fn_NtQueryKey(key, 3, buffer, size, &size);
-    if (result == STATUS_SUCCESS)
-      buffer[size / sizeof(wchar_t)] = 0;
-    
-    r = !wcscmp(buffer + 2, L"\\REGISTRY\\MACHINE\\SOFTWARE\\Khronos\\Vulkan\\ImplicitLayers");
-    free(buffer);
-  }
-
-  return r;
-}
-
-/**
- * Inject HTML layer on index 0.
- */
-static LONG WINAPI hook_RegEnumValueA(
-  HKEY hKey,
-  DWORD dwIndex,
-  LPSTR lpValueName,
-  LPDWORD lpcchValueName,
-  LPDWORD lpReserved,
-  LPDWORD lpType,
-  LPBYTE lpData,
-  LPDWORD lpcbData
-) {
-  LONG result;
-  auto it = gRegKeys.find(hKey);
-  bool notSaved = it == gRegKeys.end();
-
-  if (notSaved && !dwIndex) {
-    // The handle isn't recorded and it's the first call on this key.
-    if (checkKeyName(hKey)) {
-      // Set the current registry handle as access for Vulkan layer loader.
-      gRegKeys[hKey] = 1;
-
-      // Inject the layer.
-      if (lpValueName)
-        strcpy(lpValueName, gPathLayerConfig);
-      if (lpcchValueName)
-        *lpcchValueName = strlen(gPathLayerConfig) + 1;
-      if (lpType)
-        *lpType = REG_DWORD;
-      if (lpData)
-        *((i32 *)lpData) = 0;
-      if (lpcbData)
-        *lpcbData = 4;
-
-      return ERROR_SUCCESS;
-    } else
-      // Set the current registry handle as regular access.
-      gRegKeys[hKey] = 2;
-  }
-
-  // Return the enumerate result.
-  result = fn_RegEnumValueA(
-    hKey,
-    (!notSaved && gRegKeys[hKey] == 1) ? dwIndex - 1 : dwIndex,
-    lpValueName,
-    lpcchValueName,
-    lpReserved,
-    lpType,
-    lpData,
-    lpcbData);
-  if (result == ERROR_NO_MORE_ITEMS)
-    // Enumeration ended.
-    gRegKeys.erase(hKey);
-
-  return result;
-}
-
-/**
  * Find the game window.
  */
 static BOOL CALLBACK enumWndProc(HWND hWnd, LPARAM lParam) {
@@ -208,7 +113,6 @@ static BOOL CALLBACK enumWndProc(HWND hWnd, LPARAM lParam) {
 
 static DWORD WINAPI onAttach(LPVOID lpParam) {
   HMODULE hModule = (HMODULE)lpParam;
-  HWND gameWnd = nullptr;
 
   (void)hModule;
 
@@ -216,20 +120,15 @@ static DWORD WINAPI onAttach(LPVOID lpParam) {
   gHeap = HeapCreate(0, 0, 0);
   gEventGuiInit = CreateEventA(nullptr, 0, 0, nullptr);
 
-  // Find the game window and game edition.
-  while (!gameWnd) {
-    Sleep(250);
-    EnumWindows(enumWndProc, (LPARAM)&gameWnd);
+  // Enable mods after the menu is created.
+  if (WaitForSingleObject(gEventGuiInit, 30000) == WAIT_TIMEOUT) {
+    // The most annoying error message of hSC Plugin LOL :P
+    // This error is considered "NEVER TRIGGERED".
+    LOGEF("Gui init timed out after 30 seconds.\n");
+    return 0;
   }
 
-  // Load mods after the menu is created.
-  WaitForSingleObject(gEventGuiInit, 30000);
-
-  std::wstring optionsPath(gPathDataWide);
-  optionsPath += L"\\options.json";
-  HTiOptionsLoadFromFile(optionsPath.c_str());
-
-  HTiLoadMods();
+  HTiEnableMods();
 
   return 0;
 }
@@ -266,19 +165,14 @@ BOOL APIENTRY DllMain(
     LOGI("  baseAddr = 0x%p\n", gGameStatus.baseAddr);
 
     MH_Initialize();
-    MH_CreateHookApi(
-      L"advapi32.dll",
-      "RegEnumValueA",
-      (void *)hook_RegEnumValueA,
-      (void **)&fn_RegEnumValueA
-    );
-    MH_EnableHook(MH_ALL_HOOKS);
+
+    HTiSetupWinHooks();
 
     CreateThread(
       nullptr, 0, onAttach, (LPVOID)hModule, 0, nullptr);
   } else if (dwReason == DLL_PROCESS_DETACH) {
     // Forcely update all options.
-    HTiOptionsUpdate(10000.0f);
+    HTiOptionsUpdate(114514.1919810f);
     MH_DisableHook(MH_ALL_HOOKS);
     MH_Uninitialize();
     FreeLibrary(hWinHttp);
