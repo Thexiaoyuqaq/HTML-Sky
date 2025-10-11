@@ -153,9 +153,15 @@ static void scanMods() {
       continue;
     if (!HTiFileExists(manifest.paths.dll.data()))
       continue;
-    
+
     // When scanning mods, the mod data won't be accessed by multiple threads,
     // so we don't need to protect it.
+    if (gModDataLoader.find(manifest.meta.packageName) != gModDataLoader.end()) {
+      // Skip duplicated mods.
+      LOGW("Duplicated package name %s, skipped.\n", manifest.meta.packageName.c_str());
+      continue;
+    }
+
     gModDataLoader[manifest.meta.packageName] = manifest;
 
     LOGI("Scanned mod %s.\n", manifest.modName.data());
