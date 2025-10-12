@@ -197,6 +197,8 @@ static void textFormatInto(
     if (!insideChar && (ch == '\n' || ch == '\0')) {
       fmt(pBegin, subStrLen, basicColor);
       pBegin = &str[i + 1];
+      if (*pBegin == '\0')
+        break;
       continue;
     }
 

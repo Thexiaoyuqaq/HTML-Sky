@@ -71,6 +71,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTAsmHookCreateRaw(
     return HTiErrAndRet(HTError_AlreadyExists, HT_FAIL);
 
   hook.intent = hook.actual = (PFN_HTVoidFunction)fn;
+  hook.detour = (PFN_HTVoidFunction)detour;
   hook.owner = hModuleOwner;
   hook.name = "";
 
@@ -81,6 +82,9 @@ HTMLAPIATTR HTStatus HTMLAPI HTAsmHookCreateRaw(
 
   if (s != MH_OK)
     return HTiErrAndRet(HTError_AccessDenied, HT_FAIL);
+  
+  if (origin)
+    *origin = (void *)hook.trampoline;
 
   gHooks[(void *)hook.intent] = hook;
 
@@ -152,6 +156,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTAsmHookCreate(
     return HTiErrAndRet(HTError_AlreadyExists, HT_FAIL);
 
   hook.intent = hook.actual = (PFN_HTVoidFunction)func->fn;
+  hook.detour = (PFN_HTVoidFunction)func->detour;
   hook.owner = hModuleOwner;
   hook.name = func->name;
 
@@ -159,7 +164,8 @@ HTMLAPIATTR HTStatus HTMLAPI HTAsmHookCreate(
     (void *)hook.actual,
     (void *)hook.detour,
     (void **)&hook.trampoline);
-  
+  func->origin = (void *)hook.trampoline;
+
   if (s != MH_OK)
     return HTiErrAndRet(HTError_AccessDenied, HT_FAIL);
 

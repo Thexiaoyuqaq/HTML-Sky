@@ -1,0 +1,85 @@
+This file contains the changelog of HTModLoader.
+
+
+-------------------------------------------------------------------------------
+ Version 1.5.0 (2025.10.12)
+-------------------------------------------------------------------------------
+
+Breaking Changes:
+
+- Updated ImGui to v1.92.2b.
+- Renamed `HTSignature` to `HTAsmSig`.
+- Removed `name` field in HTAsmSig.
+- Renamed `HTHookFunction` to `HTAsmFunction`.
+- Added `name` field in `HTAsmFunction`, for debug use.
+- Modified the order of field `fn` and field `detour` in the `HTAsmFunction`.
+- Added HTAsmHookCreateRaw(), HTAsmHookCreateAPI(), HTAsmHookCreate(), 
+  HTAsmHookEnable(), HTAsmHookDisable() to create and install hooks.
+- Added HTTellText(), HTTellTextV(), HTTellRaw(), HTTellRawV() to print texts
+  in the in-game console.
+- Used thread_local to storage error codes of HTSetLastError() and HTGetLastError().
+
+Other Changes:
+
+- The mod scanner will skip mods with the same package name among the scanned
+  mods.
+
+
+-------------------------------------------------------------------------------
+ Version 1.4.0-beta (2025.10.09)
+-------------------------------------------------------------------------------
+
+Breaking Changes:
+
+- Mods will be scanned and loaded when the game is creating main window.
+- Mod's exported HTModOnEnable() will be called when the game is started.
+
+Other Changes:
+
+- Fixed missing FindClose() of the mod scanner.
+- Renamed all internal functions.
+
+
+-------------------------------------------------------------------------------
+ Version 1.3.0-beta (2025.09.28)
+-------------------------------------------------------------------------------
+
+Breaking Changes:
+
+- Added HTSetLastError() and HTGetLastError() to get further info when the HTML
+  APIs has failed.
+- The mod loader will save the key binding data for the mods.
+
+Other Changes:
+
+
+-------------------------------------------------------------------------------
+ Version 1.2.0-beta (2025.09.25)
+-------------------------------------------------------------------------------
+
+Breaking Changes:
+
+- Removed includes/aliases.h. All typedefs of exported apis has changed to win-style.
+
+Other Changes:
+
+- Added key bind clearing, press ESC to set the key binding being changed to HTKey_None.
+- Mod loader will store the .ini file of ImGui in htmodloader/htmlgui.ini
+
+-------------------------------------------------------------------------------
+ Version 1.1.0-beta (2025.09.23)
+-------------------------------------------------------------------------------
+
+Changes:
+
+- Added HTKeyEventPreventFlags to modify visibility of key messages.
+- Changed mod folder structures.
+
+
+-------------------------------------------------------------------------------
+ Version 1.0.1-beta (2025.09.19)
+-------------------------------------------------------------------------------
+
+Changes:
+
+- Supported mouse wheel in HTHotkey APIs.

@@ -24,7 +24,7 @@ CXX = g++
 CFLAGS = -Wall -Wformat -Wno-unused-function -O3 -ffunction-sections -fdata-sections -static -flto=auto -s
 CFLAGS += -I./src
 LFLAGS = -Wl,--gc-sections,-O3,--version-script,$(SRC_DIR)/exports.txt,--out-implib,$(DIST_DIR)/htmodloader.lib
-LFLAGS += -lgdi32 -ldwmapi -ld3dcompiler -lstdc++
+LFLAGS += -lgdi32 -ldwmapi -ld3dcompiler -lstdc++ -limm32
 # Include ImGui.
 CFLAGS += -I./libraries/imgui-1.92.2b -I./libraries/imgui-1.92.2b/backends
 LFLAGS += -L./libraries/imgui-1.92.2b -limgui -limgui_impl_win32 -limgui_impl_vulkan
