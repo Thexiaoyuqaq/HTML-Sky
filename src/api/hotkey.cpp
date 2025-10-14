@@ -128,13 +128,15 @@ HTMLAPIATTR HTHandle HTMLAPI HTHotkeyRegisterEx(
 
     // The first time to register the key, set the key code to default.
     result->key = defaultCode;
-    result->isRegistered = 1;
   }
 
+  result->isRegistered = 1;
   result->defaultKey = defaultCode;
   result->keyName = name;
   result->displayName = name;
   result->flags = flags;
+
+  rt->hasRegisteredKeys = 1;
 
   gHotkeyCallbacks[result->key].insert(result);
   HTiRegisterHandle(result, HTHandleType_Hotkey);

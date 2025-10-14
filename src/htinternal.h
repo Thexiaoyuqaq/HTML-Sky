@@ -245,6 +245,8 @@ struct ModRuntime {
   ModInternalFunctions loaderFunc;
   // Shared functions.
   std::map<std::string, PFN_HTVoidFunction> functions;
+  // True if the mod has explictly registered key bindings.
+  u08 hasRegisteredKeys;
   // Registered hotkeys.
   std::map<std::string, ModKeyBind> keyBinds;
 };

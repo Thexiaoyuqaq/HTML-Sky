@@ -127,9 +127,11 @@ static void mergeOptionsForMod(
   ModRuntime *fakeRT,
   ModRuntime *realRT
 ) {
-  for (auto it = realRT->keyBinds.begin(); it != realRT->keyBinds.end(); it++)
+  for (auto it = realRT->keyBinds.begin(); it != realRT->keyBinds.end(); it++) {
     // We only care about the key codes.
     fakeRT->keyBinds[it->first].key = it->second.key;
+    fakeRT->keyBinds[it->first].isRegistered = 0;
+  }
 }
 
 static void saveOptionsForMod(

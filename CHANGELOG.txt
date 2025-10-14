@@ -9,6 +9,8 @@ Changes:
 - Added HTGetLoaderVersion() and HTGetLoaderVersionName() to get the loader's
   runtime version.
 - Added HTHotkeyBindGet() to get a bound key from a key binding.
+- Fixed the incorrect display of key bindings that were only read from the options
+  and not explicitly registered.
 
 -------------------------------------------------------------------------------
  Version 1.5.0 (2025.10.12)

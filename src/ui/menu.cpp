@@ -143,7 +143,7 @@ static void displayAndUpdateKeys() {
   ImGui::PushTextWrapPos(500.0);
   for (auto modIt = gModDataRuntime.begin(); modIt != gModDataRuntime.end(); modIt++) {
     ModRuntime *rt = &modIt->second;
-    if (rt->keyBinds.empty())
+    if (rt->keyBinds.empty() || !rt->hasRegisteredKeys)
       continue;
 
     // Mod name.
@@ -152,6 +152,8 @@ static void displayAndUpdateKeys() {
     // Keys.
     for (auto keyIt = rt->keyBinds.begin(); keyIt != rt->keyBinds.end(); keyIt++) {
       ModKeyBind *kb = &keyIt->second;
+      if (!kb->isRegistered)
+        continue;
       ImGui::PushID((void *)kb);
       showSingleKeyBind(kb, cursor);
       ImGui::PopID();
