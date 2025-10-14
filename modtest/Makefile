@@ -22,7 +22,7 @@ CXX = g++
 CFLAGS = -Wall -Wformat -O3 -ffunction-sections -fdata-sections -static -flto -s
 CFLAGS += -I./src
 LFLAGS = -Wl,--gc-sections,-O3
-CFLAGS += -I../libraries/imgui-1.91.9b
+CFLAGS += -I../libraries/imgui-1.92.2b
 CFLAGS += -I../src
 
 LFLAGS += -L../dist -lhtmodloader

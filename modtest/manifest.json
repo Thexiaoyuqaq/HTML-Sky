@@ -1,6 +1,6 @@
 {
   "package_name": "modtest",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "game_edition": 3,
   "mod_name": "Mod Test",
   "description": "Test mod of HT's Mod Loader",
