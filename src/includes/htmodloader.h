@@ -172,6 +172,27 @@ HTMLAPIATTR void HTMLAPI HTSetLastError(
   HTError dwError);
 HTMLAPIATTR HTError HTMLAPI HTGetLastError();
 
+// For calling ImGui from DLLs that can't link ImGui from htmodloader.lib.
+typedef struct {
+  LPVOID pImGui;
+  PFN_HTVoidFunction pImAllocatorAllocFunc;
+  PFN_HTVoidFunction pImAllocatorFreeFunc;
+  LPVOID pImAllocatorUserData;
+} HTImGuiContexts;
+
+/**
+ * Get ImGui global context for those mods which can't link ImGui from
+ * htmodloader.lib.
+ * 
+ * Call this function inside HTModRenderGui(), on the first frame, and set the
+ * context of the mod's own ImGui library after calling ImGui functions.
+ * 
+ * Note that all ImGui drawing calls, whatever with or without the loader,
+ * should only be put inside HTModRenderGui().
+ */
+HTMLAPIATTR HTStatus HTMLAPI HTImGuiDispatch(
+  HTImGuiContexts *context);
+
 // ----------------------------------------------------------------------------
 // [SECTION] HTML assembly patch APIs.
 // ----------------------------------------------------------------------------

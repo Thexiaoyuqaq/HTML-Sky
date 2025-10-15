@@ -148,3 +148,20 @@ HTMLAPIATTR u32 HTMLAPI HTGetModInfoFrom(
 
   return HTiErrAndRet(HTError_Success, size);
 }
+
+HTMLAPIATTR HTStatus HTMLAPI HTImGuiDispatch(
+  HTImGuiContexts *context
+) {
+  if (!context)
+    return HTiErrAndRet(HTError_InvalidParam, HT_FAIL);
+  if (!ImGui::GetCurrentContext())
+    return HTiErrAndRet(HTError_AccessDenied, HT_FAIL);
+
+  context->pImGui = ImGui::GetCurrentContext();
+  ImGui::GetAllocatorFunctions(
+    (ImGuiMemAllocFunc *)&context->pImAllocatorAllocFunc,
+    (ImGuiMemFreeFunc *)&context->pImAllocatorFreeFunc,
+    (void **)&context->pImAllocatorUserData);
+
+  return HTiErrAndRet(HTError_Success, HT_SUCCESS);
+}

@@ -16,6 +16,7 @@ Changes:
 - The console will scroll to the bottom automatically when new text is added.
 - Added shared mutex for the console texts.
 - Optimized HTGetModInfoFrom().
+- Added HTImGuiDispatch() to expose GImGui to mods that can't link htmodloader.lib.
 
 -------------------------------------------------------------------------------
  Version 1.5.0 (2025.10.12)
