@@ -21,6 +21,7 @@ Changes:
   longest line.
 - Fixed incorrect width calculation of console text when the longest line is not visible.
 - Auto-scrolling now sets the X scroll value to 0.
+- Fixed a memory leak that occurred when saving options.json.
 
 
 -------------------------------------------------------------------------------

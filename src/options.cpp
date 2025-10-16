@@ -186,6 +186,7 @@ void HTiOptionsWriteToFile(
   fwrite(string, sizeof(char), strlen(string), fd);
 
   cJSON_Delete(json);
+  cJSON_free((void *)string);
   fclose(fd);
 
   LOGI("Options saved to %ls\n", path);
