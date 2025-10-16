@@ -17,6 +17,11 @@ Changes:
 - Added shared mutex for the console texts.
 - Optimized HTGetModInfoFrom().
 - Added HTImGuiDispatch() to expose GImGui to mods that can't link htmodloader.lib.
+- Fixed incorrect display when scrolling console text when the last line is the
+  longest line.
+- Fixed incorrect width calculation of console text when the longest line is not visible.
+- Auto-scrolling now sets the X scroll value to 0.
+
 
 -------------------------------------------------------------------------------
  Version 1.5.0 (2025.10.12)

@@ -243,7 +243,7 @@ void HTiRenderConsoleTexts() {
   i32 lineBegin = (i32)floorf(scrollY / lineHeight);
   i32 lineEnd = std::max(std::min(
     (i32)(gText.size() - 1),
-    lineBegin + (i32)floor((scrollY + contentSize.y) / lineHeight)
+    lineBegin + (i32)floor((scrollY + contentSize.y) / lineHeight) + 1
   ), 0);
 
   if (gText.empty()) {
@@ -256,11 +256,21 @@ void HTiRenderConsoleTexts() {
 
   ImU32 prevColor;
   std::string lineBuffer;
-  for (i32 i = lineBegin; i <= lineEnd; i++) {
+  for (i32 i = 0; i < (i32)gText.size(); i++) {
     ConsoleLine &line = gText[i];
     ImVec2 lineStartScreenPos = ImVec2(cursorScreenPos.x, cursorScreenPos.y + i * lineHeight);
     ImVec2 textScreenPos = ImVec2(lineStartScreenPos.x + MARGIN_LEFT, lineStartScreenPos.y);
     ImVec2 textPosOffset(0, 0);
+
+    if (i < lineBegin || i > lineEnd) {
+      // If the line is invisible, then just calculate its width.
+      for (u64 j = 0; j < line.size(); )
+        lineBuffer.push_back(line[j++].chByte);
+      textPosOffset.x += ImGui::CalcTextSize(lineBuffer.c_str()).x;
+      totalWidth = std::max(totalWidth, textPosOffset.x);
+      lineBuffer.clear();
+      continue;
+    }
 
     for (u64 j = 0; j < line.size(); ) {
       ConsoleChar &data = line[j];
@@ -315,6 +325,7 @@ void HTiRenderConsoleTexts() {
   if (scrollEnd) {
     // ImGui::GetScrollMaxY() is calculated from the last frame's height, so
     // we need to add increased text heights in current frame.
+    ImGui::SetScrollX(0);
     ImGui::SetScrollY(ImGui::GetScrollMaxY() + std::max(0.0f, textHeight - gLastTextHeight));
     scrollEnd = false;
   }
