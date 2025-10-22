@@ -62,6 +62,30 @@ static void HTTestShowMainWindow(
       strcpy(buf, "§aC§bo§cl§do§er§1f§2u§3l");
   }
 
+  if (ImGui::CollapsingHeader("Options")) {
+    static char optionString[128] = {0};
+    static double optionDouble = 0.0;
+    static bool optionBool = false;
+
+    ImGui::InputText("OptionText", optionString, sizeof(optionString));
+    ImGui::InputDouble("OptionDouble", &optionDouble);
+    ImGui::Checkbox("OptionBool", &optionBool);
+
+    if (ImGui::Button("Save")) {
+      HTOptionSetCustom(hModuleDll, "modtest:optionText", HTOptionType_String, (void *)optionString);
+      HTOptionSetCustom(hModuleDll, "modtest:optionDouble", HTOptionType_Double, (void *)&optionDouble);
+      HTOptionSetCustom(hModuleDll, "modtest:optionBool", HTOptionType_Bool, (void *)&optionBool);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Read")) {
+      HTOptionGetCustom(hModuleDll, "modtest:optionText", HTOptionType_String, (void *)optionString, NULL);
+      HTOptionGetCustom(hModuleDll, "modtest:optionDouble", HTOptionType_Double, (void *)&optionDouble, NULL);
+      HTOptionGetCustom(hModuleDll, "modtest:optionBool", HTOptionType_Bool, (void *)&optionBool, NULL);
+    }
+  }
+
   ImGui::End();
 }
 

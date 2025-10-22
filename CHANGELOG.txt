@@ -13,6 +13,7 @@ Changes:
 - Formatted all function declarations in htmodloader.h and htinternal.h
 - Added HTOptionGetCustom() and HTOptionSetCustom() for mods to save their own options
   and config.
+- Added demo for HTOptionGetCustom() and HTOptionSetCustom().
 
 -------------------------------------------------------------------------------
  Version 1.6.0 (2025.10.16)
