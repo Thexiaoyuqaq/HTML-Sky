@@ -14,6 +14,8 @@ Changes:
 - Added HTOptionGetCustom() and HTOptionSetCustom() for mods to save their own options
   and config.
 - Added demo for HTOptionGetCustom() and HTOptionSetCustom().
+- Now the game edition flags is checked when scanning mods instead of when expanding
+  mods.
 
 -------------------------------------------------------------------------------
  Version 1.6.0 (2025.10.16)
