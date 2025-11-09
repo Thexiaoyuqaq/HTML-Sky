@@ -5,6 +5,12 @@ This file contains the changelog of HTModLoader.
  Version 1.8.0 WIP
 -------------------------------------------------------------------------------
 
+Breaking Changes:
+- Vulkan layer implementaion will create `html-config.json` if missing.
+- Use `htconfig.h` to enable or disable backends.
+- Allow customization of game and renderer backend code except for Sky:CotL.
+- Transfer all game related and platform related code to the `backends` folder.
+
 
 -------------------------------------------------------------------------------
  Version 1.7.0 (2025.11.01)

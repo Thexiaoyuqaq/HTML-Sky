@@ -42,15 +42,11 @@ typedef enum {
   HT_SUCCESS = 1
 } HTStatus;
 
-// Game editions.
-typedef enum {
-  // Uninitialized state.
-  HT_EDITION_UNKNOWN = 0,
-  // Chinese edition.
-  HT_EDITION_CHINESE,
-  // International edition.
-  HT_EDITION_INTERNATIONAL
-} HTGameEdition;
+// Game editions. Defined by backends.
+typedef int HTGameEdition;
+
+// Uninitialized state.
+#define HT_ImplNull_EditionUnknown 0
 
 // Game status.
 typedef struct {

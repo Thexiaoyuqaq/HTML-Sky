@@ -50,7 +50,6 @@ void HTiLogW(
 extern HTGameStatus gGameStatus;
 extern char gPathDll[MAX_PATH]
   , gPathGameExe[MAX_PATH]
-  , gPathLayerConfig[MAX_PATH]
   , gPathData[MAX_PATH]
   , gPathMods[MAX_PATH]
   , gPathGuiIni[MAX_PATH];
@@ -356,12 +355,23 @@ void HTiOptionsWriteToFile(
 // [SECTION] Bootstrap and setup declarations.
 // ----------------------------------------------------------------------------
 
+// Backends must try to accquire this lock before initalize ImGui.
+extern std::mutex gGraphicInitMutex;
 extern HTHandle hKeyMenuToggle;
 
-// Install hooks on WinAPI functions that we need. Setup procedure is in the
-// detour functions on CreateWindowEx().
-void HTiSetupWinHooks();
-// Scan and load mods into the game, then initialize all loaded mods.
+// Check if the backend expects the process module name.
+// Used to quickly confirm whether full functionality needs to be enabled.
+int HTiBackendExpectProcess();
+
+// Setup all enabled backends.
+int HTiBackendSetupAll();
+
+// Set the game status.
+void HTiSetGameStatus(
+  HTGameStatus *);
+
+// Scan and load mods into the game, then initialize all loaded mods. Called by
+// backends.
 void HTiSetupAll();
 
 // Register the loader itself as a single mod. The package name of the loader

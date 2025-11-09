@@ -27,8 +27,6 @@ static i32 initPaths(HMODULE hModule) {
   if (!p)
     return 0;
   *p = 0;
-  strcpy(gPathLayerConfig, gPathDll);
-  strcat(gPathLayerConfig, "\\html-config.json");
 
   p = strrchr(gPathGameExe, '\\');
   if (!p)
@@ -98,30 +96,25 @@ BOOL APIENTRY DllMain(
   LPVOID lpReserved
 ) {
   if (dwReason == DLL_PROCESS_ATTACH) {
+    gModLoaderHandle = hModule;
+
     // Build proxy dispatch table.
     hWinHttp = LoadLibraryA("C:\\Windows\\System32\\winhttp.dll");
     proxy_importFunctions(hWinHttp);
 
-    gGameStatus.baseAddr = (void *)GetModuleHandleA("Sky.exe");
-    if (!gGameStatus.baseAddr)
+    if (!HTiBackendExpectProcess())
       // Not the correct game process, act as winhttp.dll.
       return TRUE;
-    gGameStatus.pid = GetCurrentProcessId();
-    gModLoaderHandle = hModule;
-
-    // No log file and console.
-    HTiInitLogger(nullptr, 0);
 
     initPaths(hModule);
 
+    // No log file and console by default.
+    HTiInitLogger(nullptr, 0);
     LOGI("HTML attatched.\n");
-    LOGI("Game info: \n");
-    LOGI("  pid = 0x%lu\n", gGameStatus.pid);
-    LOGI("  baseAddr = 0x%p\n", gGameStatus.baseAddr);
 
     MH_Initialize();
 
-    HTiSetupWinHooks();
+    HTiBackendSetupAll();
 
     CreateThread(
       nullptr, 0, onAttach, (LPVOID)hModule, 0, nullptr);
