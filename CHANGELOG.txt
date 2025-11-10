@@ -2,7 +2,26 @@ This file contains the changelog of HTModLoader.
 
 
 -------------------------------------------------------------------------------
- Version 1.7.0 WIP
+ Version 1.8.0 WIP
+-------------------------------------------------------------------------------
+
+Changes:
+- Added HTDataStoreStringKey() and HTDataGetStringKey().
+- Added demo for HTDataStore() and HTDataGet().
+- Added HTDataStore() and HTDataGet() to save persistent data.
+- Introduced LevelDB and ZLib.
+- Added game backend for MCBE Chinese Edition.
+- Added `HT_ImplNull_EditionAll` to ignore edition check.
+- Added more backend functions to allow backends to customize game edition check
+  and ImGui initialize.
+- Vulkan layer implementaion will create `html-config.json` if missing.
+- Use `htconfig.h` to enable or disable backends.
+- Allow customization of game and renderer backend code except for Sky:CotL.
+- Transfer all game related and platform related code to the `backends` folder.
+
+
+-------------------------------------------------------------------------------
+ Version 1.7.0 (2025.11.01)
 -------------------------------------------------------------------------------
 
 Changes:
@@ -14,10 +33,10 @@ Changes:
 - Added HTOptionGetCustom() and HTOptionSetCustom() for mods to save their own options
   and config.
 - Added demo for HTOptionGetCustom() and HTOptionSetCustom().
-- Introduced LevelDB and ZLib.
-- Added HTDataStore() and HTDataGet() to save persistent data.
-- Added demo for HTDataStore() and HTDataGet().
-- Added HTDataStoreStringKey() and HTDataGetStringKey().
+- Now the game edition flags is checked when scanning mods instead of when expanding
+  mods.
+- The console will merge repeated lines to a single line.
+
 
 -------------------------------------------------------------------------------
  Version 1.6.0 (2025.10.16)
