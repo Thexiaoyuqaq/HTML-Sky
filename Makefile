@@ -13,6 +13,8 @@ CPP_SRC = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/*/*.cpp)
 C_OBJ = $(addprefix $(DIST_DIR)/, $(notdir $(C_SRC:.c=.o)))
 CPP_OBJ = $(addprefix $(DIST_DIR)/, $(notdir $(CPP_SRC:.cpp=.o)))
 
+CXX_HEADER = $(wildcard $(SRC_DIR)/*.h $(SRC_DIR)/*/*.h)
+
 TARGET = winhttp.dll
 BIN_TARGET = $(DIST_DIR)/$(TARGET)
 
@@ -27,7 +29,7 @@ LFLAGS = -Wl,--gc-sections,-O3,--version-script,$(SRC_DIR)/exports.txt,--out-imp
 LFLAGS += -lgdi32 -ldwmapi -ld3dcompiler -lstdc++ -limm32
 # Include ImGui.
 CFLAGS += -I./libraries/imgui-1.92.2b -I./libraries/imgui-1.92.2b/backends
-LFLAGS += -L./libraries/imgui-1.92.2b -limgui -limgui_impl_win32 -limgui_impl_vulkan
+LFLAGS += -L./libraries/imgui-1.92.2b -limgui -limgui_impl_win32 -limgui_impl_vulkan -limgui_impl_opengl3
 # Include MinHook.
 CFLAGS += -I./libraries/MinHook/include
 LFLAGS += -L./libraries/MinHook -lMinHook
@@ -50,11 +52,11 @@ $(BIN_TARGET): $(C_OBJ) $(CPP_OBJ)
 	@$(CXX) --std=c++17 $(CFLAGS) $^ -shared -o $@ $(LFLAGS)
 	@echo Done.
 
-$(DIST_DIR)/%.o: %.c
+$(DIST_DIR)/%.o: %.c $(CXX_HEADER)
 	@echo Compiling file "$<" ...
 	@$(CC) --std=c11 $(CFLAGS) -c $< -o $@
 
-$(DIST_DIR)/%.o: %.cpp
+$(DIST_DIR)/%.o: %.cpp $(CXX_HEADER)
 	@echo Compiling file "$<" ...
 	@$(CXX) $(CFLAGS) -c $< -o $@
 

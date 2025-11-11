@@ -5,7 +5,6 @@
 
 #include <windows.h>
 #include <ntstatus.h>
-#include <stdio.h>
 #include "vulkan/vulkan.h"
 #include "vulkan/vk_layer.h"
 #include "vulkan/vk_platform.h"

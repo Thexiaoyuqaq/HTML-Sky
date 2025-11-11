@@ -3,7 +3,7 @@ AR = ar
 
 CFLAGS = -std=c++11 -g -Wall -Wformat -I. -I./backends -I../vulkan/Include
 
-all: libimgui.a libimgui_impl_win32.a libimgui_impl_vulkan.a
+all: libimgui.a libimgui_impl_win32.a libimgui_impl_vulkan.a libimgui_impl_opengl3.a
 
 libimgui.a: ./imgui_draw.o ./imgui_tables.o ./imgui_widgets.o ./imgui.o
 	$(AR) rcs $@ $^
@@ -12,6 +12,9 @@ libimgui_impl_win32.a: ./imgui_impl_win32.o
 	$(AR) rcs $@ $<
 
 libimgui_impl_vulkan.a: ./imgui_impl_vulkan.o
+	$(AR) rcs $@ $<
+
+libimgui_impl_opengl3.a: ./imgui_impl_opengl3.o
 	$(AR) rcs $@ $<
 
 ./imgui_draw.o: ./imgui_draw.cpp
@@ -27,6 +30,9 @@ libimgui_impl_vulkan.a: ./imgui_impl_vulkan.o
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 ./imgui_impl_win32.o: ./backends/imgui_impl_win32.cpp
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+./imgui_impl_opengl3.o: ./backends/imgui_impl_opengl3.cpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 ./imgui_impl_vulkan.o: ./backends/imgui_impl_vulkan.cpp

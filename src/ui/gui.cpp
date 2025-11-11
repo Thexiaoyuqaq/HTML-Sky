@@ -17,7 +17,8 @@ bool gShowMainMenu = true
 /**
  * Initialize ImGui context and window message hook.
  * 
- * This function only be called after the game window is catched.
+ * Backends should call this function at least once before calling
+ * `HTiBackendGLEnterCritical()`.
  */
 void HTiInitGUI() {
   if (!gGameStatus.window)

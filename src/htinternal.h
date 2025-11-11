@@ -404,7 +404,10 @@ void HTiBootstrap();
 extern bool gShowMainMenu
   , gShowDebugger;
 
-// Initialize ImGui style and colors.
+// Initialize ImGui context and window message hook.
+//
+// Backends should call this function at least once before calling
+// `HTiBackendGLEnterCritical()`.
 void HTiInitGUI();
 // Destroy ImGui context.
 void HTiDeinitGUI();
