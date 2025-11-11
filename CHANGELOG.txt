@@ -6,6 +6,8 @@ This file contains the changelog of HTModLoader.
 -------------------------------------------------------------------------------
 
 Changes:
+- Fixed incorrect function name `utf8ToWchar` in html_impl_vklayer.
+- Changed gameEditionFlag to int32_t to allow more games.
 - Added OpenGL3 backend.
 - Added HTDataStoreStringKey() and HTDataGetStringKey().
 - Added demo for HTDataStore() and HTDataGet().

@@ -216,7 +216,7 @@ struct ModManifest {
   // The author of the mod.
   std::string author;
   // Game edition the mod supports.
-  u08 gameEditionFlags;
+  HTGameEdition gameEditionFlags;
   // Dependencies of the mod.
   std::vector<ModMeta> dependencies;
   // Mod runtime data.

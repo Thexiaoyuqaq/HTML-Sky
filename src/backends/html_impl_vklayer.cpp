@@ -1075,7 +1075,7 @@ int HTi_ImplVkLayer_Init() {
   );
   success |= (s == MH_OK);
 
-  std::wstring path = utf8ToWchar(gPathLayerConfig);
+  std::wstring path = HTiUtf8ToWstring(gPathLayerConfig);
   if (!HTiFileExists(path.c_str())) {
     // Try to create html-config.json
     FILE *fd = _wfopen(path.c_str(), L"w+");

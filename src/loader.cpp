@@ -80,9 +80,10 @@ static i32 deserializeManifestJson(
   
   // Get compatible game edition of the mod.
   editionFlag = cJSON_GetNumberValue(cJSON_GetObjectItemCaseSensitive(json, "game_edition"));
-  if (std::isnan(editionFlag) || ((u08)editionFlag & 0x03) == 0)
+  if (std::isnan(editionFlag))
+    // Invalid game edition.
     goto RET;
-  manifest->gameEditionFlags = (u08)editionFlag & 0x03;
+  manifest->gameEditionFlags = (i32)editionFlag;
 
   // Get display info.
   manifest->modName = getStringValueFrom(json, "mod_name");
@@ -139,6 +140,8 @@ static void scanMods() {
   ModManifest manifest;
   std::wstring modsFolderPath(gPathModsWide);
 
+  LOGI("Scanning mods...\n");
+
   modsFolderPath += L"\\*";
   hFindFile = FindFirstFileW(modsFolderPath.data(), &findData);
   if (!hFindFile)
@@ -149,6 +152,9 @@ static void scanMods() {
       continue;
     if (!wcscmp(findData.cFileName, L".") || !wcscmp(findData.cFileName, L".."))
       continue;
+
+    LOGI("Found potential mod folder: %s\n", findData.cFileName);
+
     if (!parseModManifest(findData.cFileName, &manifest))
       continue;
     if (!HTiFileExists(manifest.paths.dll.data()))
