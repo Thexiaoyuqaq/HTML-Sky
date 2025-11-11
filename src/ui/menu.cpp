@@ -244,7 +244,7 @@ void HTiMenuSettings() {
  */
 void HTiMenuAbouts() {
   ImGui::Text("HT's Mod Loader v" HTML_VERSION_NAME " by HTMonkeyG");
-  ImGui::Text("A mod loader developed for Sky:CotL.");
+  ImGui::Text("A general mod loader initially developed for Sky:CotL.");
   ImGui::TextLinkOpenURL(
     "<https://www.github.com/HTMonkeyG/HTML-Sky>",
     "https://www.github.com/HTMonkeyG/HTML-Sky");
