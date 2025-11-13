@@ -13,15 +13,37 @@
 
 #ifdef USE_IMPL_OPENGL3
 
-typedef WINBOOL (WINAPI *PFN_SwapBuffers)(
-  HDC);
+#define HT_IMGL3W_IMPL
+#include "html_impl_opengl3_loader.h"
 
-static PFN_SwapBuffers fn_SwapBuffers;
+typedef WINBOOL (WINAPI *PFN_wglSwapBuffers)(
+  HDC);
+typedef WINBOOL (WINAPI *PFN_wglSwapLayerBuffers)(
+  HDC, UINT);
+typedef HDC (WINAPI *PFN_wglGetCurrentDC)();
+
+static PFN_wglGetCurrentDC fn_wglGetCurrentDC = nullptr;
+static PFN_wglSwapBuffers fn_wglSwapBuffers = nullptr;
+static PFN_wglSwapLayerBuffers fn_wglSwapLayerBuffers = nullptr;
 static bool gInit = false;
 
-static WINBOOL WINAPI hook_SwapBuffers(
+static struct {
+
+} gSavedStatus;
+
+static void setupRenderState() {
+
+}
+
+static void restoreRenderState() {
+
+}
+
+static void doRender(
   HDC hDC
 ) {
+  (void)hDC;
+
   if (!gInit) {
     gInit = true;
     HTiInitGUI();
@@ -34,6 +56,14 @@ static WINBOOL WINAPI hook_SwapBuffers(
   }
   HTiBackendGLLeaveCritical();
 
+  if (glGetIntegerv == nullptr) {
+    ht_imgl3wInit();
+    HMODULE hOpengl32 = LoadLibraryA("opengl32.dll");
+    if (hOpengl32)
+      fn_wglGetCurrentDC = (PFN_wglGetCurrentDC)GetProcAddress(hOpengl32, "wglGetCurrentDC");
+    FreeLibrary(hOpengl32);
+  }
+
   // Create new frame.
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplWin32_NewFrame();
@@ -43,9 +73,47 @@ static WINBOOL WINAPI hook_SwapBuffers(
   HTiUpdateGUI();
 
   ImGui::Render();
-  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-  return fn_SwapBuffers(hDC);
+  HDC hGameDC = GetDC(gGameStatus.window);
+  if (
+    hGameDC != hDC
+    || (fn_wglGetCurrentDC && fn_wglGetCurrentDC() != hGameDC)
+  )
+    return (void)ReleaseDC(gGameStatus.window, hGameDC);;
+
+  // Since we hooked wglSwapBuffers, the render pass can be considered as ended,
+  // so we don't save and restore GL states.
+  // The following GL calls start a new render pass.
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDepthRangef(0.0f, 1.0f);
+  glClearDepthf(1.0f);
+  glClearStencil(0);
+  glDepthMask(GL_TRUE);
+  glStencilMask(0xFF);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0, 0xFF); 
+  glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0xFF); 
+  glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_KEEP); 
+  glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_KEEP);
+
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+static WINBOOL WINAPI hook_wglSwapLayerBuffers(
+  HDC hDC,
+  UINT uPlanes
+) {
+  doRender(hDC);
+  return fn_wglSwapLayerBuffers(hDC, uPlanes);
+}
+
+static WINBOOL WINAPI hook_wglSwapBuffers(
+  HDC hDC
+) {
+  doRender(hDC);
+  return fn_wglSwapBuffers(hDC);
 }
 
 /**
@@ -55,16 +123,22 @@ int HTi_ImplOpenGL3_Init() {
   int success = 0;
   MH_STATUS s;
 
+  (void)GL_VERSION;
+  (void)GL_MAJOR_VERSION;
+  (void)GL_MINOR_VERSION;
+  (void)glGetString;
+
   // We don't want to create a new thread and wait, so we load gdi32.dll
   // directly.
-  LoadLibraryW(L"gdi32.dll");
+  LoadLibraryW(L"opengl32.dll");
   s = MH_CreateHookApi(
-    L"gdi32.dll",
-    "SwapBuffers",
-    (void *)hook_SwapBuffers,
-    (void **)&fn_SwapBuffers
+    L"opengl32.dll",
+    "wglSwapBuffers",
+    (void *)hook_wglSwapBuffers,
+    (void **)&fn_wglSwapBuffers
   );
-  success |= (s == MH_OK);
+  success &= (s == MH_OK);
+  //s = MH_EnableHook()
 
   return success;
 }
