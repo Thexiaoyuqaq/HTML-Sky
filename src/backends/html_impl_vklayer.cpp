@@ -1064,19 +1064,11 @@ static LONG WINAPI hook_RegEnumValueA(
  * Setup the vulkan layer injection.
  */
 int HTi_ImplVkLayer_Init() {
-  int success = 0;
   MH_STATUS s;
+  void *function;
 
   strcpy(gPathLayerConfig, gPathDll);
   strcat(gPathLayerConfig, "\\html-config.json");
-
-  s = MH_CreateHookApi(
-    L"advapi32.dll",
-    "RegEnumValueA",
-    (void *)hook_RegEnumValueA,
-    (void **)&fn_RegEnumValueA
-  );
-  success |= (s == MH_OK);
 
   std::wstring path = HTiUtf8ToWstring(gPathLayerConfig);
   if (!HTiFileExists(path.c_str())) {
@@ -1092,7 +1084,19 @@ int HTi_ImplVkLayer_Init() {
     }
   }
 
-  return success;
+  s = MH_CreateHookApiEx(
+    L"advapi32.dll",
+    "RegEnumValueA",
+    (void *)hook_RegEnumValueA,
+    (void **)&fn_RegEnumValueA,
+    &function
+  );
+  if (s != MH_OK)
+    return 0;
+  if (MH_EnableHook(function) != MH_OK)
+    return 0;
+
+  return 1;
 }
 
 #endif

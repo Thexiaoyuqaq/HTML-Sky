@@ -165,32 +165,35 @@ int HTi_ImplMCBE_ExpectProcess() {
  */
 int HTi_ImplMCBE_Init() {
   MH_STATUS s;
+  void *function;
 
   if (!HTi_ImplMCBE_ExpectProcess())
     return 0;
   
   HTiSetGameBackendName(HT_ImplMCBE_Name);
 
-  s = MH_CreateHookApi(
+  s = MH_CreateHookApiEx(
     L"user32.dll",
     "CreateWindowExA",
     (void *)hook_CreateWindowExA,
-    (void **)&fn_CreateWindowExA
+    (void **)&fn_CreateWindowExA,
+    &function
   );
   if (s != MH_OK)
     return 0;
+  if (MH_EnableHook(function) != MH_OK)
+    return 0;
 
-  s = MH_CreateHookApi(
+  s = MH_CreateHookApiEx(
     L"user32.dll",
     "CreateWindowExW",
     (void *)hook_CreateWindowExW,
-    (void **)&fn_CreateWindowExW
+    (void **)&fn_CreateWindowExW,
+    &function
   );
   if (s != MH_OK)
     return 0;
-
-  s = MH_EnableHook(MH_ALL_HOOKS);
-  if (s != MH_OK)
+  if (MH_EnableHook(function) != MH_OK)
     return 0;
 
   return 1;
