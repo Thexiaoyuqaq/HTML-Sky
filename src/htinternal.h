@@ -357,6 +357,16 @@ void HTiOptionsWriteToFile(
 
 extern HTHandle hKeyMenuToggle;
 
+extern char gActiveGameBackendName[32];
+extern char gActiveGLBackendName[32];
+
+// Set the name of currently active backends.
+// Backends should call these functions after it's actived.
+int HTiSetGameBackendName(
+  const char *);
+int HTiSetGLBackendName(
+  const char *);
+
 // Check if the backend expects the process module name.
 // Used to quickly confirm whether full functionality needs to be enabled.
 int HTiBackendExpectProcess();

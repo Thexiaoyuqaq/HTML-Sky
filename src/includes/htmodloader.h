@@ -144,6 +144,15 @@ HTMLAPIATTR UINT32 HTMLAPI HTGetModInfoFrom(
   LPVOID out,
   UINT32 maxLen);
 
+/**
+ * Get the name of currently active backends.
+ * 
+ * The name of the backends MUST NOT longer than 32 bytes, including '\0'.
+ */
+HTMLAPIATTR void HTMLAPI HTGetActiveBackendName(
+  LPSTR gl,
+  LPSTR game);
+
 // Error codes. Partially the same as winerror.h
 typedef int HTError;
 typedef enum {

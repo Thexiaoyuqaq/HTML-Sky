@@ -8,6 +8,7 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_opengl3.h"
 
+#include "includes/backends/html_impl_opengl3.h"
 #include "htinternal.h"
 #include "includes/htconfig.h"
 
@@ -26,7 +27,9 @@ static PFN_wglGetCurrentDC fn_wglGetCurrentDC = nullptr;
 static PFN_wglSwapBuffers fn_wglSwapBuffers = nullptr;
 static PFN_wglSwapLayerBuffers fn_wglSwapLayerBuffers = nullptr;
 static bool gInit = false;
+static HMODULE hDllOpengl32 = nullptr;
 
+/*
 static struct {
 
 } gSavedStatus;
@@ -38,6 +41,7 @@ static void setupRenderState() {
 static void restoreRenderState() {
 
 }
+*/
 
 static void doRender(
   HDC hDC
@@ -50,7 +54,10 @@ static void doRender(
   }
 
   if (HTiBackendGLEnterCritical()) {
+    // Initialize ImGui.
     ImGui_ImplOpenGL3_Init();
+    HTiSetGLBackendName(HT_ImplOpenGL3_Name);
+
     // Set the gui inited event.
     HTiBackendGLInitComplete();
   }
@@ -120,9 +127,10 @@ static WINBOOL WINAPI hook_wglSwapBuffers(
  * Setup the vulkan layer injection.
  */
 int HTi_ImplOpenGL3_Init() {
-  int success = 0;
   MH_STATUS s;
+  void *function = nullptr;
 
+  // To make the gl3w_stripped happy.
   (void)GL_VERSION;
   (void)GL_MAJOR_VERSION;
   (void)GL_MINOR_VERSION;
@@ -130,17 +138,43 @@ int HTi_ImplOpenGL3_Init() {
 
   // We don't want to create a new thread and wait, so we load gdi32.dll
   // directly.
-  LoadLibraryW(L"opengl32.dll");
-  s = MH_CreateHookApi(
+  // To keep the hook effective, we don't free the dll.
+  hDllOpengl32 = LoadLibraryA("opengl32.dll");
+  if (!hDllOpengl32)
+    return 0;
+
+  s = MH_CreateHookApiEx(
     L"opengl32.dll",
     "wglSwapBuffers",
     (void *)hook_wglSwapBuffers,
-    (void **)&fn_wglSwapBuffers
+    (void **)&fn_wglSwapBuffers,
+    &function
   );
-  success &= (s == MH_OK);
-  //s = MH_EnableHook()
+  if (s != MH_OK)
+    return 0;
 
-  return success;
+  if (MH_EnableHook(function) != MH_OK)
+    return 0;
+
+  s = MH_CreateHookApiEx(
+    L"opengl32.dll",
+    "wglSwapLayerBuffers",
+    (void *)hook_wglSwapLayerBuffers,
+    (void **)&fn_wglSwapLayerBuffers,
+    &function
+  );
+  if (s != MH_OK)
+    return 0;
+
+  if (MH_EnableHook(function) != MH_OK)
+    return 0;
+
+  return 1;
+}
+
+int HTi_ImplOpenGL3_Shutdown() {
+  // Free opengl32.dll
+  FreeLibrary(hDllOpengl32);
 }
 
 #endif

@@ -258,3 +258,17 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionSetCustom(
   return HTiErrAndRet(HTError_Success, HT_SUCCESS);
 }
 
+HTMLAPIATTR void HTMLAPI HTGetActiveBackendName(
+  LPSTR gl,
+  LPSTR game
+) {
+  if (gl) {
+    strncpy(gl, gActiveGLBackendName, 31);
+    gl[31] = 0;
+  }
+
+  if (game) {
+    strncpy(game, gActiveGameBackendName, 31);
+    game[31] = 0;
+  }
+}

@@ -168,6 +168,8 @@ int HTi_ImplMCBE_Init() {
 
   if (!HTi_ImplMCBE_ExpectProcess())
     return 0;
+  
+  HTiSetGameBackendName(HT_ImplMCBE_Name);
 
   s = MH_CreateHookApi(
     L"user32.dll",

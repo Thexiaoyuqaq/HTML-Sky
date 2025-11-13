@@ -4,7 +4,6 @@
 // ----------------------------------------------------------------------------
 #include <windows.h>
 #include <mutex>
-
 #include "imgui.h"
 
 #include "htinternal.h"
@@ -17,6 +16,9 @@ static i32 checkEditionDefault(
   HTGameEdition);
 static CRITICAL_SECTION gGraphicInitMutex;
 static PFN_HTiGameEditionCheck gEditionCheck = checkEditionDefault;
+
+char gActiveGameBackendName[32] = {0};
+char gActiveGLBackendName[32] = {0};
 
 static i32 checkEditionDefault(
   HTGameEdition edition
@@ -52,6 +54,22 @@ int HTiBackendSetEditionCheckFunc(
   PFN_HTVoidFunction func
 ) {
   gEditionCheck = (PFN_HTiGameEditionCheck)func;
+  return 1;
+}
+
+int HTiSetGLBackendName(
+  const char *gl
+) {
+  strncpy(gActiveGLBackendName, gl, 31);
+  gActiveGLBackendName[31] = 0;
+  return 1;
+}
+
+int HTiSetGameBackendName(
+  const char *game
+) {
+  strncpy(gActiveGameBackendName, game, 31);
+  gActiveGameBackendName[31] = 0;
   return 1;
 }
 

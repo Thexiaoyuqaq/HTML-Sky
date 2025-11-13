@@ -169,30 +169,33 @@ int HTi_ImplSky_ExpectProcess() {
  */
 int HTi_ImplSky_Init() {
   MH_STATUS s;
+  void *function;
 
   if (!HTi_ImplSky_ExpectProcess())
     return 0;
 
-  s = MH_CreateHookApi(
+  HTiSetGameBackendName(HT_ImplSky_Name);
+
+  s = MH_CreateHookApiEx(
     L"user32.dll",
     "CreateWindowExA",
     (void *)hook_CreateWindowExA,
-    (void **)&fn_CreateWindowExA
+    (void **)&fn_CreateWindowExA,
+    &function
   );
-  if (s != MH_OK)
+  if (s != MH_OK) return 0;
+  if (MH_EnableHook(function) != MH_OK)
     return 0;
 
-  s = MH_CreateHookApi(
+  s = MH_CreateHookApiEx(
     L"user32.dll",
     "CreateWindowExW",
     (void *)hook_CreateWindowExW,
-    (void **)&fn_CreateWindowExW
+    (void **)&fn_CreateWindowExW,
+    &function
   );
-  if (s != MH_OK)
-    return 0;
-
-  s = MH_EnableHook(MH_ALL_HOOKS);
-  if (s != MH_OK)
+  if (s != MH_OK) return 0;
+  if (MH_EnableHook(function) != MH_OK)
     return 0;
 
   return 1;

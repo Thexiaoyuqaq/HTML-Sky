@@ -20,6 +20,7 @@
 #include <vector>
 #include <map>
 
+#include "includes/backends/html_impl_vklayer.h"
 #include "htinternal.h"
 #include "includes/htconfig.h"
 
@@ -621,6 +622,8 @@ static VkResult renderGui(
       initInfo.PipelineCache = VK_NULL_HANDLE;
       initInfo.Subpass = 0;
       ImGui_ImplVulkan_Init(&initInfo);
+
+      HTiSetGLBackendName(HT_ImplVkLayer_Name);
 
       // Set the gui inited event.
       HTiBackendGLInitComplete();
