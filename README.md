@@ -1,6 +1,10 @@
 # HT's Mod Loader for Sky:Cotl
 Use HTML to execute code before the game does.
 
+**This project and its derivatives are only intented to be used for learning purposes. This repository won't contain any anti-anti-cheat.**
+
+**The responsibility arising from the use of this project and its derivatives in multiplayer games shall be borne by the users themselves.**
+
 ## Usage
 1. Download latest mod loader in [releases](https://www.github.com/HTMonkeyG/HTML-Sky/releases/latest).
 2. Put `winhttp.dll` and `html-config.json` (optional) under the same folder with `Sky.exe`.
@@ -37,8 +41,8 @@ Use MinGW-w64 15.1.0 to build the project.
   "package_name": "modtest",
   // Mod version.
   "version": "1.0.0",
-  // Compatible game edition flags.
-  // 1 for Chinese edition and 2 for international edition, 3 for both.
+  // Compatible game edition flags. Check the backends for further information.
+  // -1 for all games.
   "game_edition": 3,
   // Display name.
   "mod_name": "Mod Test",
