@@ -4,6 +4,7 @@
 #include <windows.h>
 
 #include "htaliases.h"
+#include "htinternal.h"
 #include "includes/htmodloader.h"
 
 /**
@@ -189,11 +190,11 @@ HTMLAPIATTR void *HTMLAPI HTSigScan(const HTAsmSig *signature) {
     return NULL;
 
   if (signature->indirect == HT_SCAN_DIRECT)
-    return sigScan("Sky.exe", signature->sig, signature->offset);
+    return sigScan(gGameProcessName.c_str(), signature->sig, signature->offset);
   else if (signature->indirect == HT_SCAN_E8)
-    return sigScanE8("Sky.exe", signature->sig, signature->offset);
+    return sigScanE8(gGameProcessName.c_str(), signature->sig, signature->offset);
   else if (signature->indirect == HT_SCAN_FF15)
-    return sigScanFF15("Sky.exe", signature->sig, signature->offset);
+    return sigScanFF15(gGameProcessName.c_str(), signature->sig, signature->offset);
   else
     return NULL;
 }

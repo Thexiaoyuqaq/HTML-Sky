@@ -5,6 +5,9 @@ This file contains the changelog of HTModLoader.
  Version 1.9.0 WIP
 -------------------------------------------------------------------------------
 
+Changes:
+- Fix the unchanged module name in signature scanning.
+
 
 -------------------------------------------------------------------------------
  Version 1.8.1

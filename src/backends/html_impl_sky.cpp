@@ -160,7 +160,7 @@ static HWND WINAPI hook_CreateWindowExW(
 }
 
 int HTi_ImplSky_ExpectProcess() {
-  return !!GetModuleHandleA("Sky.exe");
+  return !!GetModuleHandleA(HT_ImplSky_ExecutableName);
 }
 
 /**
@@ -175,6 +175,7 @@ int HTi_ImplSky_Init() {
     return 0;
 
   HTiSetGameBackendName(HT_ImplSky_Name);
+  HTiSetGameProcessName(HT_ImplSky_ExecutableName);
 
   s = MH_CreateHookApiEx(
     L"user32.dll",

@@ -359,12 +359,18 @@ extern HTHandle hKeyMenuToggle;
 
 extern char gActiveGameBackendName[32];
 extern char gActiveGLBackendName[32];
+extern std::string gGameProcessName;
 
 // Set the name of currently active backends.
 // Backends should call these functions after it's actived.
 int HTiSetGameBackendName(
   const char *);
 int HTiSetGLBackendName(
+  const char *);
+
+// Set the name of the game executable file. The signature scanner only scans
+// codes in the executable file of the game.
+int HTiSetGameProcessName(
   const char *);
 
 // Check if the backend expects the process module name.

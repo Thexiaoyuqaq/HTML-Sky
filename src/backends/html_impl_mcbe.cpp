@@ -156,7 +156,7 @@ static HWND WINAPI hook_CreateWindowExW(
 }
 
 int HTi_ImplMCBE_ExpectProcess() {
-  return !!GetModuleHandleA("Minecraft.Windows.exe");
+  return !!GetModuleHandleA(HT_ImplMCBE_ExecutableName);
 }
 
 /**
@@ -169,8 +169,9 @@ int HTi_ImplMCBE_Init() {
 
   if (!HTi_ImplMCBE_ExpectProcess())
     return 0;
-  
+
   HTiSetGameBackendName(HT_ImplMCBE_Name);
+  HTiSetGameProcessName(HT_ImplMCBE_ExecutableName);
 
   s = MH_CreateHookApiEx(
     L"user32.dll",

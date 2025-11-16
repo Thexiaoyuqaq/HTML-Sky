@@ -9,5 +9,6 @@
 #define HT_ImplSky_EditionAll         0x00000003
 
 #define HT_ImplSky_Name               "Impl_Sky"
+#define HT_ImplSky_ExecutableName     "Sky.exe"
 
 #endif
