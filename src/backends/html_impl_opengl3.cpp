@@ -12,7 +12,7 @@
 #include "htinternal.h"
 #include "includes/htconfig.h"
 
-#ifdef USE_IMPL_OPENGL3
+#ifdef HTML_USE_IMPL_OPENGL3
 
 #define HT_IMGL3W_IMPL
 #include "html_impl_opengl3_loader.h"

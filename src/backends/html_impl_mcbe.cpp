@@ -10,7 +10,7 @@
 #include "includes/backends/html_impl_mcbe.h"
 #include "includes/htconfig.h"
 
-#ifdef USE_IMPL_MCBE
+#ifdef HTML_USE_IMPL_MCBE
 
 #define HTTexts_WndNamePostfixW L"Minecraft"
 #define HTTexts_WndClassW L"OGLES"

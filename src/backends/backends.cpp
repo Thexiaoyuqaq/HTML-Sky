@@ -90,7 +90,7 @@ int HTiBackendExpectProcess() {
   extern int HTi_ImplSky_ExpectProcess();
   success |= HTi_ImplSky_ExpectProcess();
 #endif
-#ifdef USE_IMPL_MCBE
+#ifdef HTML_USE_IMPL_MCBE
   // Expect Minecraft.Windows.exe
   extern int HTi_ImplMCBE_ExpectProcess();
   success |= HTi_ImplMCBE_ExpectProcess();
@@ -110,7 +110,7 @@ int HTiBackendSetupAll() {
   extern int HTi_ImplVkLayer_Init();
   success |= HTi_ImplVkLayer_Init();
 #endif
-#ifdef USE_IMPL_OPENGL3
+#ifdef HTML_USE_IMPL_OPENGL3
   // Setup OpenGL3.
   extern int HTi_ImplOpenGL3_Init();
   success |= HTi_ImplOpenGL3_Init();
@@ -122,7 +122,7 @@ int HTiBackendSetupAll() {
   extern int HTi_ImplSky_Init();
   success |= HTi_ImplSky_Init();
 #endif
-#ifdef USE_IMPL_MCBE
+#ifdef HTML_USE_IMPL_MCBE
   // Setup Minecraft:Bedrock.
   extern int HTi_ImplMCBE_Init();
   success |= HTi_ImplMCBE_Init();

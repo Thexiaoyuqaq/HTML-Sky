@@ -9,7 +9,7 @@
 // Sky: CotL, Chinese and international edition.
 #define HTML_USE_IMPL_SKY
 // Minecraft: Bedrock Edition, both netease and international.
-//#define USE_IMPL_MCBE
+//#define HTML_USE_IMPL_MCBE
 
 // Graphic backends.
 // - Graphic backends must be strongly related to the target game.
@@ -19,8 +19,9 @@
 // Vulkan layer.
 #define HTML_USE_IMPL_VKLAYER
 // OpenGL3.
-//#define USE_IMPL_OPENGL3
+//#define HTML_USE_IMPL_OPENGL3
 
 #define HTML_USE_IMPL_PROXY
 
-#define HTML_HTML_ENABLE_LOGGER
+// Enable the logger.
+//#define HTML_ENABLE_LOGGER
