@@ -23,8 +23,6 @@ extern "C" {
 // [SECTION] Mod loader logger.
 // ----------------------------------------------------------------------------
 
-#ifdef HTML_ENABLE_LOGGER
-
 #define LOGI(format, ...) HTiLogA("[INFO] " format, ##__VA_ARGS__)
 #define WLOGI(format, ...) HTiLogW(L"[INFO] " format, ##__VA_ARGS__)
 #define LOGW(format, ...) HTiLogA("[WARN] " format, ##__VA_ARGS__)
@@ -33,19 +31,6 @@ extern "C" {
 #define WLOGE(format, ...) HTiLogW(L"[ERR] " format, ##__VA_ARGS__)
 #define LOGEF(format, ...) HTiLogA("[ERR][FATAL] " format, ##__VA_ARGS__)
 #define WLOGEF(format, ...) HTiLogW(L"[ERR][FATAL] " format, ##__VA_ARGS__)
-
-#else
-
-#define LOGI(format, ...)
-#define WLOGI(format, ...)
-#define LOGW(format, ...)
-#define WLOGW(format, ...)
-#define LOGE(format, ...)
-#define WLOGE(format, ...)
-#define LOGEF(format, ...)
-#define WLOGEF(format, ...)
-
-#endif
 
 void HTiInitLogger(
   const wchar_t *fileName,
