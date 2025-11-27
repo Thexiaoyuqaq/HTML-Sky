@@ -7,7 +7,7 @@
 // - Only one backend implementation is allowed to be enabled at compile time.
 //
 // Sky: CotL, Chinese and international edition.
-#define USE_IMPL_SKY
+#define HTML_USE_IMPL_SKY
 // Minecraft: Bedrock Edition, both netease and international.
 //#define USE_IMPL_MCBE
 
@@ -17,8 +17,10 @@
 // - Multiple graphic backends can be enabled at the same time, but only one will be used.
 //
 // Vulkan layer.
-#define USE_IMPL_VKLAYER
+#define HTML_USE_IMPL_VKLAYER
 // OpenGL3.
 //#define USE_IMPL_OPENGL3
 
-#define USE_IMPL_PROXY
+#define HTML_USE_IMPL_PROXY
+
+#define HTML_HTML_ENABLE_LOGGER

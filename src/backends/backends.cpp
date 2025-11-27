@@ -85,7 +85,7 @@ int HTiBackendExpectProcess() {
   int success = 0;
 
   // Setup all game backends.
-#ifdef USE_IMPL_SKY
+#ifdef HTML_USE_IMPL_SKY
   // Expect Sky.exe
   extern int HTi_ImplSky_ExpectProcess();
   success |= HTi_ImplSky_ExpectProcess();
@@ -105,7 +105,7 @@ int HTiBackendSetupAll() {
   InitializeCriticalSection(&gGraphicInitMutex);
 
   // Setup all graphic backends.
-#ifdef USE_IMPL_VKLAYER
+#ifdef HTML_USE_IMPL_VKLAYER
   // Setup vulkan layer.
   extern int HTi_ImplVkLayer_Init();
   success |= HTi_ImplVkLayer_Init();
@@ -117,7 +117,7 @@ int HTiBackendSetupAll() {
 #endif
 
   // Setup all game backends.
-#ifdef USE_IMPL_SKY
+#ifdef HTML_USE_IMPL_SKY
   // Setup Sky:CotL.
   extern int HTi_ImplSky_Init();
   success |= HTi_ImplSky_Init();

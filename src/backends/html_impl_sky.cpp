@@ -13,7 +13,7 @@
 #include "includes/backends/html_impl_sky.h"
 #include "includes/htconfig.h"
 
-#ifdef USE_IMPL_SKY
+#ifdef HTML_USE_IMPL_SKY
 
 #define HTTexts_WndClassW L"TgcMainWindow"
 #define HTTexts_WndNameInW L"Sky"
