@@ -201,6 +201,7 @@ static void getModExportedFunctions(
 static void expandMods() {
   HMODULE hMod;
   ModRuntime *runtimeData;
+  std::wstring oldPath;
 
   for (auto it = gModDataLoader.begin(); it != gModDataLoader.end(); it++) {
     const char *modName = it->second.modName.data();
@@ -210,15 +211,31 @@ static void expandMods() {
       // to load it again.
       continue;
 
+    // Save previous dll directory.
+    u32 needed = GetDllDirectoryW(0, nullptr);
+    if (needed) {
+      oldPath.resize(needed + 1);
+      GetDllDirectoryW(needed + 1, oldPath.data());
+    }
+
+    // Set new dll searching directory.
+    SetDllDirectoryW(it->second.paths.folder.c_str());
+
     // Load library.
-    hMod = LoadLibraryW(it->second.paths.dll.data());
+    hMod = LoadLibraryW(it->second.paths.dll.c_str());
     if (hMod)
       LOGI("Loaded mod %s.\n", modName);
     else
       LOGI("Load mod %s failed: No such file.\n", modName);
 
+    // Restore saved dll searching directory.
+    if (needed)
+      SetDllDirectoryW(oldPath.c_str());
+    else
+      SetDllDirectoryW(nullptr);
+
     // Save runtime data.
-    {
+    if (hMod) {
       // While the mods are loading one by one, subthreads created by the mods
       // may access mod data structs at the same time, so we need a global
       // lock.
