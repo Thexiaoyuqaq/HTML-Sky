@@ -39,7 +39,7 @@ void HTiLogW(
   ...);
 
 // ----------------------------------------------------------------------------
-// [SECTION] Mod loader globals and internal functions.
+// [SECTION] Mod loader globals.
 // ----------------------------------------------------------------------------
 
 #define HTiErrAndRet(e, v) (HTSetLastError(e), v)
@@ -55,6 +55,10 @@ extern wchar_t gPathModsWide[MAX_PATH]
 extern HANDLE gHeap
   , gEventGuiInit;
 extern HMODULE gModLoaderHandle;
+
+// ----------------------------------------------------------------------------
+// [SECTION] Codepage, file and path.
+// ----------------------------------------------------------------------------
 
 // Convert string from wchar_t to UTF-8.
 static inline void wcstoutf8(
@@ -84,7 +88,7 @@ static inline std::wstring HTiUtf8ToWstring(
   const char *input
 ) {
   if (!input)
-    return std::wstring();
+    return L"";
   u64 len = strlen(input);
   std::wstring result;
   i32 size = MultiByteToWideChar(CP_UTF8, 0, input, len, nullptr, 0);
@@ -98,7 +102,7 @@ static inline std::string HTiWstringToUtf8(
   const wchar_t *input
 ) {
   if (!input)
-    return std::string();
+    return "";
   std::string result;
   i32 size = WideCharToMultiByte(CP_UTF8, 0, input, -1, nullptr, 0, nullptr, nullptr);
   result.resize(size);
@@ -108,7 +112,7 @@ static inline std::string HTiWstringToUtf8(
 
 // Read file as UTF-8 encoding with _wfopen.
 static inline std::string HTiReadFileAsUtf8(
-  std::wstring path
+  const std::wstring &path
 ) {
   std::string buffer;
   FILE *fd = _wfopen(path.c_str(), L"rb");
@@ -147,6 +151,32 @@ static inline i32 HTiFolderExists(
     return 0;
   return 1;
 }
+
+// Normalizes the given path, resolving '..' and '.' segments.
+std::wstring HTiPathNormalize(
+  const std::wstring &);
+
+// Joins all given path segments together using the platform-specific separator
+// as a delimiter, then normalizes the resulting path.
+std::wstring HTiPathJoin(
+  const std::vector<std::wstring> &);
+
+// Resolves a sequence of paths or path segments into an absolute path.
+std::wstring HTiPathResolve(
+  const std::vector<std::wstring> &);
+
+// returns the relative path from from to to based on the current working
+// directory. If from and to each resolve to the same path (after calling
+// `HTiPathResolve()` on each), a zero-length string is returned.
+// If a zero-length string is passed as from or to, the current working directory
+// will be used instead of the zero-length strings.
+std::wstring HTiPathRelative(
+  const std::wstring &,
+  const std::wstring &);
+
+// ----------------------------------------------------------------------------
+// [SECTION] Mod loader functions.
+// ----------------------------------------------------------------------------
 
 // Scan and load all mods, then call the exported HTModOnInit() function of
 // each mod.
