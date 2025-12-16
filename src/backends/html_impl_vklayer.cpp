@@ -1067,7 +1067,7 @@ int HTi_ImplVkLayer_Init() {
   MH_STATUS s;
   void *function;
 
-  LOGI("[ImplVklayer] HTi_ImplVkLayer_Init() called.\n");
+  LOG("[ImplVklayer][INFO] HTi_ImplVkLayer_Init() called.\n");
 
   strcpy(gPathLayerConfig, gPathDll);
   strcat(gPathLayerConfig, "\\html-config.json");
@@ -1077,7 +1077,7 @@ int HTi_ImplVkLayer_Init() {
     // Try to create html-config.json
     FILE *fd = _wfopen(path.c_str(), L"w+");
     if (fd) {
-      LOGI("[ImplVklayer] Create html-config.json at %ls\n", path.c_str());
+      LOG("[ImplVklayer][INFO] Create html-config.json at %ls\n", path.c_str());
       fwrite(
         HTTexts_DefaultLayerConfig,
         sizeof(char),
@@ -1099,7 +1099,7 @@ int HTi_ImplVkLayer_Init() {
   if (MH_EnableHook(function) != MH_OK)
     return 0;
 
-  LOGI("[ImplVklayer] Hook RegEnumValueA(): %p\n", function);
+  LOG("[ImplVklayer][INFO] Hooked RegEnumValueA(): 0x%p\n", function);
 
   return 1;
 }

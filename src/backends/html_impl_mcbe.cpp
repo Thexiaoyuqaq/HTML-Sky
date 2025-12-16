@@ -49,6 +49,8 @@ static i32 checkWindowAndSetupAW(
   if (gGameStatus.window)
     return 0;
 
+  LOG("[ImplMCBE][INFO] checkWindowAndSetupAW() called for hWnd: 0x%p.\n", hWnd);
+
   // Get the game edition from window name.
   GetWindowTextW(hWnd, buffer, 32);
   buffer[31] = 0;
@@ -69,6 +71,8 @@ static i32 checkWindowAndSetupAW(
   status.pid = GetCurrentProcessId();
   status.window = hWnd;
   HTiSetGameStatus(&status);
+
+  LOG("[ImplMCBE][INFO] Game status set for hWnd: 0x%p.\n", hWnd);
 
   // Set edition check function.
   HTiBackendSetEditionCheckFunc((PFN_HTVoidFunction)editionCheck);
@@ -185,6 +189,8 @@ int HTi_ImplMCBE_Init() {
   if (MH_EnableHook(function) != MH_OK)
     return 0;
 
+  LOG("[ImplMCBE][INFO] Hooked CreateWindowExA(): 0x%p.\n", function);
+
   s = MH_CreateHookApiEx(
     L"user32.dll",
     "CreateWindowExW",
@@ -196,6 +202,8 @@ int HTi_ImplMCBE_Init() {
     return 0;
   if (MH_EnableHook(function) != MH_OK)
     return 0;
+
+  LOG("[ImplMCBE][INFO] Hooked CreateWindowExW(): 0x%p.\n", function);
 
   return 1;
 }
