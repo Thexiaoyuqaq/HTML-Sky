@@ -66,7 +66,6 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommOnEvent(
   PFN_HTEventCallback callback
 ) {
   std::unique_lock<std::shared_mutex> lock(gMutex);
-  MEMORY_BASIC_INFORMATION mbi = {0};
 
   if (!hModuleOwner || !name || !callback)
     return HTiErrAndRet(HTError_InvalidParam, HT_FAIL);
@@ -74,10 +73,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommOnEvent(
     return HTiErrAndRet(HTError_InvalidHandle, HT_FAIL);
 
   // Check the protection of given address.
-  if (!VirtualQuery((void *)callback, &mbi, sizeof(mbi)))
-    return HTiErrAndRet(HTError_AccessDenied, HT_FAIL);
-  if (!(mbi.Protect & 0xF0))
-    // Not executable.
+  if (!HTiIsExecutableAddr((void *)callback))
     return HTiErrAndRet(HTError_AccessDenied, HT_FAIL);
 
   // Insert our event callback with its owner.
