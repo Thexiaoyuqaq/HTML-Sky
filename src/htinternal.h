@@ -7,6 +7,7 @@
 #include <set>
 #include <vector>
 #include <mutex>
+#include <shared_mutex>
 #include <unordered_map>
 
 #include "imgui.h"
@@ -60,6 +61,14 @@ void HTiLogW(
 // ----------------------------------------------------------------------------
 
 #define HTiErrAndRet(e, v) (HTSetLastError(e), v)
+
+typedef std::mutex HTMutex;
+typedef std::shared_mutex HTMutexShared;
+
+typedef std::shared_lock<HTMutexShared> HTLockReadable;
+typedef std::lock_guard<HTMutexShared> HTLockShared;
+
+typedef std::lock_guard<HTMutex> HTLockMutex;
 
 extern HTGameStatus gGameStatus;
 extern char gPathDll[MAX_PATH]
@@ -323,6 +332,41 @@ struct ModRuntime {
   std::map<std::string, ModCustomOption> options;
 };
 
+// Contexts of a patch.
+struct ModPatch {
+  // Begin address of the patch.
+  void *addr;
+  // Original data of the patch.
+  std::vector<u08> original;
+  // Patch data to be set.
+  std::vector<u08> patched;
+  // Owner of this patch.
+  HMODULE owner;
+};
+
+// Contexts of a hook.
+struct ModHook {
+  // Address of the function intended to be detoured.
+  PFN_HTVoidFunction intent;
+  // Address of the actually hooked function due to the hook chain.
+  PFN_HTVoidFunction actual;
+  // Address of the detour function.
+  PFN_HTVoidFunction detour;
+  // Trampoline function to be called.
+  PFN_HTVoidFunction trampoline;
+  // The owner of the hook.
+  HMODULE owner;
+  // The status of the hook.
+  bool isEnabled;
+  // [Invalid] The binary data of the leading JMP instructions.
+  ModPatch *header;
+  // [Invalid] Hook chain datas.
+  ModHook *next;
+  ModHook *prev;
+  // Debug only.
+  std::string name;
+};
+
 extern std::map<std::string, ModManifest> gModDataLoader;
 extern std::map<HMODULE, ModRuntime> gModDataRuntime;
 extern std::unordered_map<HTHandle, HTHandleType> gHandleTypes;
@@ -367,9 +411,28 @@ static inline bool HTiCheckHandleType(
   return it->second == type;
 }
 
+static inline bool HTiIsExecutableAddr(
+  void *address
+) {
+  MEMORY_BASIC_INFORMATION mbi = {0};
+
+  // Check the protection of given address.
+  if (!VirtualQuery((void *)address, &mbi, sizeof(mbi)))
+    return false;
+  if (!(mbi.Protect & 0xF0))
+    // Not executable.
+    return false;
+
+  return true;
+}
+
 // Remove all event callbacks registered by the mod.
 void HTiRemoveAllEventCallbacksOf(
   HMODULE hModuleOwner);
+
+// Find all hooks of the given mod.
+std::vector<ModHook> HTiAsmHookFindFor(
+  HMODULE owner);
 
 // ----------------------------------------------------------------------------
 // [SECTION] Option loader declarations.
