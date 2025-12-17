@@ -13,15 +13,15 @@ static HTMutexShared gMutexAsm;
 static std::map<void *, ModPatch> gPatches;
 static std::map<void *, ModHook> gHooks;
 
-std::vector<ModHook> HTiAsmHookFindFor(
+std::vector<ModHook *> HTiAsmHookFindFor(
   HMODULE owner
 ) {
   HTLockReadable lock{gMutexAsm};
-  std::vector<ModHook> result;
+  std::vector<ModHook *> result;
 
   for (auto &it: gHooks) {
     if (it.second.owner == owner)
-      result.push_back(it.second);
+      result.push_back(&it.second);
   }
 
   return result;

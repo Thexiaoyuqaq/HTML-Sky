@@ -431,7 +431,7 @@ void HTiRemoveAllEventCallbacksOf(
   HMODULE hModuleOwner);
 
 // Find all hooks of the given mod.
-std::vector<ModHook> HTiAsmHookFindFor(
+std::vector<ModHook *> HTiAsmHookFindFor(
   HMODULE owner);
 
 // ----------------------------------------------------------------------------

@@ -51,15 +51,15 @@ static void renderHooks() {
     ))
       continue;
 
-    std::vector<ModHook> hooks = HTiAsmHookFindFor(
+    std::vector<ModHook *> hooks = HTiAsmHookFindFor(
       it.first);
 
     for (auto &hook: hooks) {
       ImGui::Separator();
-      ImGui::Text(hook.name.c_str());
-      ImGui::BulletText("Addr: 0x%p", hook.intent);
-      ImGui::BulletText("Detour: 0x%p", hook.detour);
-      ImGui::BulletText("Status: %s", hook.isEnabled ? "<ENABLED>" : "<DISABLED>");
+      ImGui::Text(hook->name.c_str());
+      ImGui::BulletText("Addr: 0x%p", hook->intent);
+      ImGui::BulletText("Detour: 0x%p", hook->detour);
+      ImGui::BulletText("Status: %s", hook->isEnabled ? "<ENABLED>" : "<DISABLED>");
     }
 
     ImGui::TreePop();
