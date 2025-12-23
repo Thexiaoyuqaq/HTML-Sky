@@ -20,8 +20,8 @@ typedef HWND (WINAPI *PFN_CreateWindowExA)(
 typedef HWND (WINAPI *PFN_CreateWindowExW)(
   DWORD, LPCWSTR, LPCWSTR, DWORD, i32, i32, i32, i32, HWND, HMENU, HINSTANCE, LPVOID);
 
-static PFN_CreateWindowExA fn_CreateWindowExA;
-static PFN_CreateWindowExW fn_CreateWindowExW;
+static PFN_CreateWindowExA fn_CreateWindowExA = nullptr;
+static PFN_CreateWindowExW fn_CreateWindowExW = nullptr;
 
 static i32 editionCheck(
   HTGameEdition edition
