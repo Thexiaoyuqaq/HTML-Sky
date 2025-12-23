@@ -2,8 +2,12 @@ This file contains the changelog of HTModLoader.
 
 
 -------------------------------------------------------------------------------
- Version 1.9.0 WIP
+ Version 1.9.0
 -------------------------------------------------------------------------------
+
+Breaking Changes:
+- Added module handle requirement for `HTCommOnEvent()` and `HTCommOffEvent()`.
+- Changed `gGameProcessName` to wide string.
 
 Changes:
 - Exposed HTiPath functions as HTPath functions.
@@ -14,9 +18,7 @@ Changes:
 - Added `HTiPathIsAbsolute()`.
 - Added HTiPath functions to concat or resolve paths.
 - Added `HTSigScanEx()` to scan signature codes in other modules.
-- Changed `gGameProcessName` to wide string.
 - Normalized all enum declarations.
-- Added module handle requirement for `HTCommOnEvent()` and `HTCommOffEvent()`.
 - Fixed the wrong placeholder during log printing when scanning the mods.
 
 
