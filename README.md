@@ -31,7 +31,7 @@ Use HTML to execute code before the game does.
 Use MinGW-w64 15.1.0 to build the project.
 1. Clone the repository.
 2. Change the working directory to `HTML-Sky`, then execute `mingw32-make.exe all` on the first compilation.
-3. If you have some issues on `libraries/leveldb/lib/leveldb.lib`, clone and build `https://github.com/extremeheat/leveldb-mcpe.git`, and replace `leveldb.lib` with your own building. HTModLoader uses C API of leveldb-mcpe only, so we don't care about binary compatibility.
+3. If you have some issues on `libraries/leveldb/lib/leveldb.lib`, clone and build `https://github.com/extremeheat/leveldb-mcpe.git`, and replace `leveldb.lib` with your own building. HTModLoader uses C API of leveldb-mcpe only, so we don't care about ABI compatibility.
 
 ## FAQ
 ### 1. Difference between `sky-` versions and `full-` versions?
