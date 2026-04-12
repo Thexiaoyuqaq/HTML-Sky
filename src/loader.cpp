@@ -9,33 +9,7 @@
 #include "utils/texts.h"
 #include "htinternal.hpp"
 
-static inline i32 parseVersionNumber(
-  const char *str,
-  u32 *versions
-) {
-  u32 result[3];
-  if (sscanf(str, "%u.%u.%u", result, result + 1, result + 2) != 3)
-    return 0;
-  memcpy(versions, result, 3 * sizeof(u32));
-  return 1;
-}
-
-static inline i32 compareVersion(
-  u32 *a1,
-  u32 *a2
-) {
-  for (u08 i = 0; i < 3; i++) {
-    if (a1[i] < a2[i])
-      return -1;
-    if (a1[i] > a2[i])
-      return -1;
-  }
-  return 0;
-}
-
-/**
- * Package name should only contains `a-z A-Z 0-9 _ . @ / -`.
- */
+// Package name should only contains `a-z A-Z 0-9 _ . @ / -`.
 static inline bool validatePackageName(
   const std::string &packageName
 ) {
@@ -55,9 +29,7 @@ static inline bool validatePackageName(
   );
 }
 
-/**
- * Dll must not be located out of `mods` folder.
- */
+// Dll must not be located out of `mods` folder.
 static inline bool validateDllPath(
   const std::wstring &path
 ) {
@@ -75,15 +47,45 @@ static inline bool validateDllPath(
   return true;
 }
 
-/**
- * Helper function for get string value with cJSON.
- */
+// Helper function for get string value with cJSON.
 static inline std::string getStringValueFrom(
   const cJSON *json,
   const char *key
 ) {
   char *s = cJSON_GetStringValue(cJSON_GetObjectItemCaseSensitive(json, key));
   return s ? s : "";
+}
+
+bool ModManifest::readFromFile(
+  const std::wstring &modFolderName
+) {
+  std::wstring folder(gPathModsWide);
+
+  // Get the mod folder.
+  folder = HTiPathJoin({folder, modFolderName});
+
+  // Check the manifest.json.
+  std::wstring jsonPath = HTiPathJoin({folder, L"\\manifest.json"});
+  if (!HTiFileExists(jsonPath.data()))
+    return false;
+
+  // Save paths.
+  paths.folder = folder;
+  paths.json = jsonPath;
+
+  // Open manifest.json.
+  std::string content = HTiReadFileAsUtf8(jsonPath);
+
+  // Parse and deserialize the file.
+  cJSON *json = cJSON_Parse(content.c_str());
+  if (!json)
+    return false;
+
+  bool ret = read(json);
+
+  cJSON_Delete(json);
+
+  return ret;
 }
 
 bool ModManifest::read(
@@ -143,44 +145,33 @@ InvalidDllPath:
   description = getStringValueFrom(json, "description");
   author = getStringValueFrom(json, "author");
 
+  const cJSON *deps = cJSON_GetObjectItemCaseSensitive(json, "dependencies");
+  if (deps)
+    readDependencies(deps);
+
   return true;
 }
 
-bool ModManifest::readFromFile(
-  const std::wstring &modFolderName
+bool ModManifest::readDependencies(
+  const cJSON *deps
 ) {
-  std::wstring folder(gPathModsWide);
-
-  // Get the mod folder.
-  folder = HTiPathJoin({folder, modFolderName});
-
-  // Check the manifest.json.
-  std::wstring jsonPath = HTiPathJoin({folder, L"\\manifest.json"});
-  if (!HTiFileExists(jsonPath.data()))
+  if (!cJSON_IsObject(deps))
     return false;
 
-  // Save paths.
-  paths.folder = folder;
-  paths.json = jsonPath;
+  const cJSON *item;
+  cJSON_ArrayForEach(item, deps) {
+    if (!cJSON_IsString(item))
+      continue;
+    dependencies.push_back({
+      item->string,
+      cJSON_GetStringValue(item)
+    });
+  }
 
-  // Open manifest.json.
-  std::string content = HTiReadFileAsUtf8(jsonPath);
-
-  // Parse and deserialize the file.
-  cJSON *json = cJSON_Parse(content.c_str());
-  if (!json)
-    return false;
-
-  bool ret = read(json);
-
-  cJSON_Delete(json);
-
-  return ret;
+  return true;
 }
 
-/**
- * Scan all potential mods.
- */
+// Scan all potential mods.
 static void scanMods() {
   HANDLE hFindFile;
   WIN32_FIND_DATAW findData;
@@ -219,6 +210,8 @@ static void scanMods() {
       continue;
     }
 
+    manifest.status = ModStatus_Ok;
+    manifest.runtime = nullptr;
     gModDataLoader[manifest.meta.packageName] = manifest;
 
     LOGI("Scanned mod %s.\n", manifest.modName.data());
@@ -227,9 +220,7 @@ static void scanMods() {
   FindClose(hFindFile);
 }
 
-/**
- * Get all exported functions for the loader.
- */
+// Get all exported functions for the loader.
 static void getModExportedFunctions(
   ModRuntime *runtimeData
 ) {
@@ -242,20 +233,117 @@ static void getModExportedFunctions(
     hMod, "HTModOnEnable");
 }
 
-/**
- * Load all avaliable mods into the game process and register mod runtime data.
- */
-static void expandMods() {
+// Visit state values for topological sort.
+enum VisitStates {
+  VS_UNVISITED = 0,
+  VS_VISITING = 1,
+  VS_DONE = 2,
+  VS_DEAD = -1
+};
+ 
+// Recursively visit a mod and its dependencies for topological sorting.
+// Adds resolved mods to `result` in dependency-first order.
+// Returns false if the package should be discarded.
+static bool visitMod(
+  const std::string &pkg,
+  std::map<std::string, int> &states,
+  std::vector<ModManifest *> &result
+) {
+  int &state = states[pkg];
+ 
+  if (state == VS_DONE)
+    return true;
+  if (state == VS_DEAD)
+    return false;
+
+  ModManifest &manifest = gModDataLoader[pkg];
+
+  if (state == VS_VISITING) {
+    // Back-edge detected: this package is part of a dependency cycle.
+    LOGW("Dependency cycle detected at %s, discarding.\n", pkg.c_str());
+    state = VS_DEAD;
+    manifest.setStatus(ModStatus_CycleDep);
+    return false;
+  }
+ 
+  state = VS_VISITING;
+
+  for (const ModDependency &dep: manifest.dependencies) {
+    auto it = gModDataLoader.find(dep.packageName);
+ 
+    if (it == gModDataLoader.end()) {
+      LOGW("Dependency %s not found for %s, discarding.\n",
+        dep.packageName.c_str(),
+        pkg.c_str());
+
+      state = VS_DEAD;
+      manifest.setStatus(ModStatus_MissingDep);
+
+      return false;
+    }
+ 
+    if (
+      !dep.constraint.empty()
+      && !HTiSemVer::satisfies(it->second.meta.version, dep.constraint)
+    ) {
+      LOGW("Dependency %s version unsatisfied for %s, discarding.\n",
+        dep.packageName.c_str(),
+        pkg.c_str());
+
+      state = VS_DEAD;
+      manifest.setStatus(ModStatus_MismatchDep);
+
+      return false;
+    }
+ 
+    if (!visitMod(dep.packageName, states, result)) {
+      LOGW("Package %s discarded due to failed dependency %s.\n",
+        pkg.c_str(),
+        dep.packageName.c_str());
+
+      state = VS_DEAD;
+      manifest.setStatus(ModStatus_RemoveByDep);
+
+      return false;
+    }
+  }
+ 
+  state = VS_DONE;
+  result.push_back(&manifest);
+
+  return true;
+}
+ 
+// Construct the dependency tree and the mod loading order, remove invalid packages.
+static std::vector<ModManifest *> resolveMods() {
+  std::map<std::string, int> states;
+  std::vector<ModManifest *> result;
+ 
+  for (auto &pair: gModDataLoader)
+    states[pair.first] = VS_UNVISITED;
+ 
+  for (auto &pair: gModDataLoader) {
+    if (states[pair.first] == VS_UNVISITED)
+      visitMod(pair.first, states, result);
+  }
+
+  return result;
+}
+
+// Load all avaliable mods into the game process and register mod runtime data.
+static void expandMods(
+  const std::vector<ModManifest *> &order
+) {
   HMODULE hMod;
   ModRuntime *runtimeData;
   std::wstring oldPath;
 
-  for (auto it = gModDataLoader.begin(); it != gModDataLoader.end(); it++) {
-    const char *modName = it->second.modName.c_str();
+  for (auto mod: order) {
+    const char *modName = mod->modName.c_str();
 
     (void)modName;
 
-    if (it->second.meta.packageName == HTTexts_ModLoaderPackageName)
+    if (mod->meta.packageName == HTTexts_ModLoaderPackageName)
       // The data of mod loader itself is set in bootstrap(), so we don't need
       // to load it again.
       continue;
@@ -268,10 +356,10 @@ static void expandMods() {
     }
 
     // Set new dll searching directory.
-    SetDllDirectoryW(it->second.paths.folder.c_str());
+    SetDllDirectoryW(mod->paths.folder.c_str());
 
     // Load library.
-    hMod = LoadLibraryW(it->second.paths.dll.c_str());
+    hMod = LoadLibraryW(mod->paths.dll.c_str());
     if (hMod)
       LOGI("Loaded mod %s.\n", modName);
     else
@@ -291,9 +379,9 @@ static void expandMods() {
       std::lock_guard<std::mutex> lock(gModDataLock);
       runtimeData = &gModDataRuntime[hMod];
       runtimeData->handle = hMod;
-      runtimeData->manifest = &(it->second);
+      runtimeData->manifest = mod;
       getModExportedFunctions(runtimeData);
-      it->second.runtime = runtimeData;
+      mod->runtime = runtimeData;
 
       HTiRegisterHandle(hMod, HTHandleType_Mod);
 
@@ -302,18 +390,21 @@ static void expandMods() {
   }
 }
 
-/**
- * Call the HTModOnInit() functions exported by the mods one by one. Mods
- * can only use HTAPI within and after the function is called.
- */
-void initMods() {
+// Call the HTModOnInit() functions exported by the mods one by one. Mods
+// can only use HTAPI within and after the function is called.
+static void initMods(
+  const std::vector<ModManifest *> &order
+) {
   PFN_HTModOnInit fn;
 
-  for (auto it = gModDataRuntime.begin(); it != gModDataRuntime.end(); it++) {
-    const char *modName = it->second.manifest->modName.c_str();
+  for (auto mod: order) {
+    const char *modName = mod->modName.c_str();
     (void)modName;
 
-    fn = it->second.loaderFunc.pfn_HTModOnInit;
+    if (!mod->runtime)
+      continue;
+
+    fn = mod->runtime->loaderFunc.pfn_HTModOnInit;
 
     // We assume that mod that does not export HTModOnInit() has an independent
     // initialization (or enabling, see HTiEnableMods() below) process, so we
@@ -328,8 +419,9 @@ void initMods() {
 HTStatus HTiLoadMods() {
   HTiBootstrap();
   scanMods();
-  expandMods();
-  initMods();
+  auto order = resolveMods();
+  expandMods(order);
+  initMods(order);
 
   return HT_SUCCESS;
 }

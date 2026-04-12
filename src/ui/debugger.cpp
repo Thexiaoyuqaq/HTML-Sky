@@ -18,6 +18,16 @@ static void renderBackendData() {
 
 // Show scanned mods.
 static void renderMods() {
+  static const char *statusName[] = {
+    "Ok",
+    "Disabled",
+    "MissingDep",
+    "MismatchDep",
+    "CycleDep",
+    "RemoveByDep",
+    "DllErr"
+  };
+
   for (auto &it: gModDataLoader) {
     auto &mod = it.second;
 
@@ -31,6 +41,8 @@ static void renderMods() {
       ImGui::BulletText("Compatible game id: <Any>");
     else
       ImGui::BulletText("Compatible game id: %d", mod.gameEditionFlags);
+
+    ImGui::BulletText("Status: %s", statusName[mod.status]);
 
     if (mod.runtime)
       ImGui::BulletText("HMODULE: 0x%p", mod.runtime->handle);

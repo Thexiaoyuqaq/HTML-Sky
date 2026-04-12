@@ -351,6 +351,18 @@ struct ModDependency {
   std::string constraint;
 };
 
+// Mod status.
+typedef int ModStatus;
+enum ModStatus_ {
+  ModStatus_Ok = 0,
+  ModStatus_Disabled,
+  ModStatus_MissingDep,
+  ModStatus_MismatchDep,
+  ModStatus_CycleDep,
+  ModStatus_RemoveByDep,
+  ModStatus_DllErr,
+};
+
 struct ModRuntime;
 // Mod manifest data. This struct is associated with package name.
 struct ModManifest {
@@ -363,6 +375,17 @@ struct ModManifest {
 
   // Read the mod manifest from cJSON object.
   bool read(const cJSON *json);
+
+  // Read dependencies from cJSON object.
+  bool readDependencies(const cJSON *deps);
+
+  // Set the status.
+  void setStatus(
+    ModStatus s
+  ) {
+    if (!status)
+      status = s;
+  }
 
   // Mod identification data.
   ModMeta meta;
@@ -380,6 +403,8 @@ struct ModManifest {
   std::vector<ModDependency> dependencies;
   // Mod runtime data.
   ModRuntime *runtime;
+  // Mod status.
+  ModStatus status;
 };
 
 // HTML expected functions.

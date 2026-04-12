@@ -9,6 +9,13 @@
 
 HTHandle hKeyMenuToggle = nullptr;
 
+static HTiSemVer getSelfVersion() {
+  i32 major = HTML_VERSION / 10000
+    , minor = (HTML_VERSION / 100) % 100
+    , patch = HTML_VERSION % 100;
+  return HTiSemVer{major, minor, patch};
+}
+
 static HTStatus HTMLAPI modOnInit(
   void *
 ) {
@@ -30,7 +37,7 @@ void HTiBootstrap() {
 
   // Set manifest data.
   manifestSelf->meta.packageName = HTTexts_ModLoaderPackageName;
-  manifestSelf->meta.version.read(HTML_VERSION_NAME);
+  manifestSelf->meta.version = getSelfVersion();
   manifestSelf->author = "HTMonkeyG";
   manifestSelf->description = HTTexts_ModLoaderDesc;
   manifestSelf->gameEditionFlags = HT_ImplNull_EditionAll;
