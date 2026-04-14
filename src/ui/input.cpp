@@ -234,13 +234,13 @@ static void HTHotKeyWndProc(
     case WM_MBUTTONUP:
     case WM_XBUTTONUP: {
       HTKeyCode button = HTKey_None;
-      if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK)
+      if (uMsg == WM_LBUTTONUP)
         button = HTKey_MouseLeft;
-      if (uMsg == WM_RBUTTONDOWN || uMsg == WM_RBUTTONDBLCLK)
+      if (uMsg == WM_RBUTTONUP)
         button = HTKey_MouseRight;
-      if (uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONDBLCLK)
+      if (uMsg == WM_MBUTTONUP)
         button = HTKey_MouseMiddle;
-      if (uMsg == WM_XBUTTONDOWN || uMsg == WM_XBUTTONDBLCLK)
+      if (uMsg == WM_XBUTTONUP)
         button = (GET_XBUTTON_WPARAM(wParam) == XBUTTON1)
           ? HTKey_MouseX1
           : HTKey_MouseX2;

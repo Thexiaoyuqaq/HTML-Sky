@@ -186,7 +186,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionGetCustom(
   ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTiErrAndRet(HTError_InvalidHandle, HT_FAIL);
-  
+
   auto it = rt->options.find(key);
   if (it == rt->options.end())
     return HTiErrAndRet(HTError_NotFound, HT_FAIL);
@@ -194,7 +194,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionGetCustom(
   ModCustomOption &option = it->second;
   if (option.type != type)
     return HTiErrAndRet(HTError_NotFound, HT_FAIL);
-  
+
   switch(type) {
     case HTOptionType_Bool:
       *(bool *)data = option.valueBool;
@@ -237,7 +237,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionSetCustom(
   ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTiErrAndRet(HTError_InvalidHandle, HT_FAIL);
-  
+
   switch(type) {
     case HTOptionType_Bool:
       rt->options[key].valueBool = *(bool *)data;
