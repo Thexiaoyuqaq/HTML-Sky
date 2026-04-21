@@ -6,6 +6,7 @@ This file contains the changelog of HTModLoader.
 -------------------------------------------------------------------------------
 
 Changes:
+- Added HTAssert APIs.
 - Changed description of header sections.
 - Changed the description of `HTPathRelative`.
 - Fixed incorrect mouse events.

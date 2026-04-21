@@ -898,6 +898,50 @@ HTMLAPIATTR LPSTR HTMLAPI HTDataGetStringKey(
 HTMLAPIATTR VOID HTMLAPI HTDataFree(
   LPVOID value);
 
+// ----------------------------------------------------------------------------
+// [SECTION] HTML/assert
+// ----------------------------------------------------------------------------
+
+/**
+ * Create an assertion.
+ */
+#define HTAssert(expr) (void)(\
+  (!!(expr)) || (\
+    HTAssertImpl(#expr, __FILE__, __LINE__),\
+    __debugbreak(),\
+    0\
+  )\
+)
+
+/**
+ * Create an assertion with external message.
+ */
+#define HTAssertMsg(expr, msg, ...) (void)(\
+  (!!(expr)) || (\
+    HTAssertMsgImpl(#expr, __FILE__, __LINE__, msg, ## __VA_ARGS__),\
+    __debugbreak(),\
+    0\
+  )\
+)
+
+/**
+ * Create a messagebox with informations shown.
+ */
+HTMLAPIATTR VOID HTMLAPI HTAssertImpl(
+  LPCSTR expression,
+  LPCSTR file,
+  UINT32 line);
+
+/**
+ * Create a messagebox with informations shown.
+ */
+HTMLAPIATTR VOID HTMLAPI HTAssertMsgImpl(
+  LPCSTR expression,
+  LPCSTR file,
+  UINT32 line,
+  LPCSTR msg,
+  ...);
+
 #ifdef __cplusplus
 }
 #endif
