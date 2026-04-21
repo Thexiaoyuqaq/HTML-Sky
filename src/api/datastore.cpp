@@ -51,7 +51,7 @@ i32 HTiDeinitLDB() {
 static inline std::string concatModDataKey(
   std::string &modName,
   const char *key,
-  UINT64 keyLen
+  u64 keyLen
 ) {
   std::string fullKey{modName.c_str()};
   fullKey += '_';
@@ -62,9 +62,9 @@ static inline std::string concatModDataKey(
 
 HTMLAPIATTR HTStatus HTMLAPI HTDataStore(
   HMODULE hModule,
-  const char *key,
+  LPCSTR key,
   UINT64 keyLen,
-  const char *value,
+  LPCSTR value,
   UINT64 valueLen
 ) {
   char *err = nullptr;
@@ -100,9 +100,9 @@ HTMLAPIATTR HTStatus HTMLAPI HTDataStore(
   return HTiErrAndRet(HTError_Success, HT_SUCCESS);
 }
 
-HTMLAPIATTR char *HTMLAPI HTDataGet(
+HTMLAPIATTR LPSTR HTMLAPI HTDataGet(
   HMODULE hModule,
-  const char *key,
+  LPCSTR key,
   UINT64 keyLen,
   UINT64 *valueLen
 ) {
@@ -146,23 +146,23 @@ HTMLAPIATTR char *HTMLAPI HTDataGet(
 
 HTMLAPIATTR HTStatus HTMLAPI HTDataStoreStringKey(
   HMODULE hModule,
-  const char *key,
-  const char *value,
+  LPCSTR key,
+  LPCSTR value,
   UINT64 valueLen
 ) {
   return HTDataStore(hModule, key, strlen(key), value, valueLen);
 }
 
-HTMLAPIATTR char *HTMLAPI HTDataGetStringKey(
+HTMLAPIATTR LPSTR HTMLAPI HTDataGetStringKey(
   HMODULE hModule,
-  const char *key,
+  LPCSTR key,
   UINT64 *valueLen
 ) {
   return HTDataGet(hModule, key, strlen(key), valueLen);
 }
 
-HTMLAPIATTR void HTMLAPI HTDataFree(
-  char *value
+HTMLAPIATTR VOID HTMLAPI HTDataFree(
+  LPVOID value
 ) {
   free(value);
 }

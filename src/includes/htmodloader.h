@@ -55,7 +55,7 @@ extern "C" {
 #endif
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML basic APIs and type declarations.
+// [SECTION] HTML/basic
 // ----------------------------------------------------------------------------
 
 // Whether the execution was successful or not.
@@ -324,7 +324,7 @@ HTMLAPIATTR UINT32 HTMLAPI HTPathIsAbsolute(
   LPCWSTR path);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML assembly patch APIs.
+// [SECTION] HTML/assembly
 // ----------------------------------------------------------------------------
 
 // Enable or disable all hooks or patches created by the specified mod.
@@ -464,7 +464,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTAsmPatchDisable(
   LPVOID target);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML memory manager APIs.
+// [SECTION] HTML/memory
 // ----------------------------------------------------------------------------
 
 /**
@@ -491,7 +491,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTMemFree(
   LPVOID pointer);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML mod communication APIs.
+// [SECTION] HTML/communication
 // ----------------------------------------------------------------------------
 
 // Event callback.
@@ -565,7 +565,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTCommEmitEvent(
   LPVOID data);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML hotkey register APIs.
+// [SECTION] HTML/hotkey
 // ----------------------------------------------------------------------------
 
 // Modified from ImGui to keep compatibility.
@@ -818,7 +818,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTHotkeyUnlisten(
   LPVOID reserved);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML console text APIs.
+// [SECTION] HTML/console
 // ----------------------------------------------------------------------------
 
 /**
@@ -851,7 +851,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTTellRawV(
   va_list v);
 
 // ----------------------------------------------------------------------------
-// [SECTION] HTML persistent data storage APIs.
+// [SECTION] HTML/data
 // ----------------------------------------------------------------------------
 
 /**
@@ -869,7 +869,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTDataStore(
 /**
  * Get a stored value with given key.
  */
-HTMLAPIATTR char *HTMLAPI HTDataGet(
+HTMLAPIATTR LPSTR HTMLAPI HTDataGet(
   HMODULE hModule,
   LPCSTR key,
   UINT64 keyLen,
@@ -896,7 +896,7 @@ HTMLAPIATTR LPSTR HTMLAPI HTDataGetStringKey(
  * Free the pointer returned by HTDataGet().
  */
 HTMLAPIATTR VOID HTMLAPI HTDataFree(
-  char *value);
+  LPVOID value);
 
 #ifdef __cplusplus
 }
