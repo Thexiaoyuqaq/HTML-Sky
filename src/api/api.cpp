@@ -133,7 +133,7 @@ HTMLAPIATTR UINT32 HTMLAPI HTGetModInfoFrom(
       break;
     case HTModInfoFields_Folder:
       size = (manifest->paths.folder.length() + 1) * sizeof(wchar_t);
-      result = (void *)manifest->meta.packageName.c_str();
+      result = (void *)manifest->paths.folder.c_str();
       break;
     default:
       return HTiErrAndRet(HTError_InvalidParam, 0);
@@ -186,7 +186,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionGetCustom(
   ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTiErrAndRet(HTError_InvalidHandle, HT_FAIL);
-  
+
   auto it = rt->options.find(key);
   if (it == rt->options.end())
     return HTiErrAndRet(HTError_NotFound, HT_FAIL);
@@ -194,7 +194,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionGetCustom(
   ModCustomOption &option = it->second;
   if (option.type != type)
     return HTiErrAndRet(HTError_NotFound, HT_FAIL);
-  
+
   switch(type) {
     case HTOptionType_Bool:
       *(bool *)data = option.valueBool;
@@ -237,7 +237,7 @@ HTMLAPIATTR HTStatus HTMLAPI HTOptionSetCustom(
   ModRuntime *rt = HTiGetModRuntime(hModule);
   if (!rt)
     return HTiErrAndRet(HTError_InvalidHandle, HT_FAIL);
-  
+
   switch(type) {
     case HTOptionType_Bool:
       rt->options[key].valueBool = *(bool *)data;
@@ -347,14 +347,14 @@ HTMLAPIATTR UINT32 HTMLAPI HTPathResolve(
 
 HTMLAPIATTR UINT32 HTMLAPI HTPathRelative(
   LPWSTR result,
-  LPCWSTR path1,
-  LPCWSTR path2,
+  LPCWSTR src,
+  LPCWSTR dest,
   UINT32 maxLen
 ) {
-  if (!path1 || !path2)
+  if (!src || !dest)
     return 0;
 
-  std::wstring relative = HTiPathRelative(path1, path2);
+  std::wstring relative = HTiPathRelative(src, dest);
 
   return copyOrReturn(
     result,
